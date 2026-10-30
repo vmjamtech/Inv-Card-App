@@ -10,6 +10,8 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <!-- LZ-String for compact link compression -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
+  <!-- QRCode.js for zero-payload client-side QR generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <!-- Google Fonts: Press Start 2P & Quicksand -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -445,7 +447,7 @@
 
           <div id="dispQrContainer" class="hidden pt-1">
             <span class="block text-[10px] font-bold text-blue-700 mb-1">SCAN QR CODE:</span>
-            <img id="dispQrImage" class="w-36 h-36 object-contain mx-auto rounded-xl border-2 border-blue-300 shadow bg-white p-1" alt="GCash QR">
+            <div id="dispQrCanvas" class="w-36 h-36 mx-auto rounded-xl border-2 border-blue-300 shadow bg-white p-2 flex items-center justify-center"></div>
           </div>
         </div>
 
@@ -1226,12 +1228,13 @@
 
       const packedLoops = cardConfig.loops.map(l => [l.count, l.msg]);
 
+      // Ultra-Light Compact Data: Zero heavy Base64 payloads (strictly 170-195 chars)
       const compactData = [
         cardConfig.cardId,                                                      // 0: id
         cardConfig.theme,                                                       // 1: theme
         cardConfig.recipient,                                                   // 2: recipient
         packedLoops,                                                            // 3: loops
-        cardConfig.avatarType === 'mascot' ? (cardConfig.mascot || 'pig') : 'pig', // 4: mascot
+        cardConfig.avatarType === 'mascot' ? (cardConfig.mascot || 'pig') : 'pig', // 4: mascot ID
         cardConfig.hasAccount ? 1 : 0,                                          // 5: hasAccount
         cardConfig.hasAccount ? cardConfig.accountNum : '',                     // 6: accountNum
         cardConfig.question !== t.q ? cardConfig.question : '',                 // 7: custom question
@@ -1240,9 +1243,7 @@
         cardConfig.hasAccount && cardConfig.accountMsg !== 'Oo nga pala may Gcash ka balik ko din sa katapusan' ? cardConfig.accountMsg : '', // 10: account msg
         isCustomBg ? cardConfig.customBg : '',                                  // 11: custom bg
         isCustomPattern ? cardConfig.customPattern : '',                        // 12: custom pattern
-        cardConfig.audioKey || t.defaultBgm || 'love_piano',                    // 13: audio key
-        cardConfig.avatarType === 'photo' && cardConfig.customPhoto ? cardConfig.customPhoto : '', // 14: photo
-        cardConfig.hasAccount && cardConfig.customQr ? cardConfig.customQr : '' // 15: qr
+        cardConfig.audioKey || t.defaultBgm || 'love_piano'                     // 13: audio key
       ];
 
       while (compactData.length > 5 && compactData[compactData.length - 1] === '') {
@@ -1320,12 +1321,22 @@
         document.getElementById('dispAccountNumText').innerText = cfg.accountNum || '09195471229';
 
         const qrContainer = document.getElementById('dispQrContainer');
-        const qrImg = document.getElementById('dispQrImage');
-        if (cfg.customQr && qrContainer && qrImg) {
-          qrImg.src = cfg.customQr;
-          qrContainer.classList.remove('hidden');
-        } else if (qrContainer) {
-          qrContainer.classList.add('hidden');
+        const qrCanvas = document.getElementById('dispQrCanvas');
+        if (qrContainer && qrCanvas) {
+          qrCanvas.innerHTML = '';
+          if (cfg.accountNum && window.QRCode) {
+            new QRCode(qrCanvas, {
+              text: cfg.accountNum,
+              width: 128,
+              height: 128,
+              colorDark: "#1e3a8a",
+              colorLight: "#ffffff",
+              correctLevel: QRCode.CorrectLevel.M
+            });
+            qrContainer.classList.remove('hidden');
+          } else {
+            qrContainer.classList.add('hidden');
+          }
         }
       } else if (accBox) {
         accBox.classList.add('hidden');
@@ -1711,8 +1722,8 @@
               recipient: arr[2] || 'Cutie',
               loops: parsedLoops.length ? parsedLoops : t.loops,
               mascot: arr[4] || 'pig',
-              avatarType: arr[14] ? 'photo' : 'mascot',
-              customPhoto: arr[14] || '',
+              avatarType: 'mascot',
+              customPhoto: '',
               hasAccount: !!arr[5],
               accountNum: arr[6] || '09195471229',
               question: arr[7] || t.q,
@@ -1722,7 +1733,7 @@
               customBg: arr[11] || '',
               customPattern: arr[12] || '',
               audioKey: arr[13] || t.defaultBgm || 'love_piano',
-              customQr: arr[15] || ''
+              customQr: ''
             };
           }
 
