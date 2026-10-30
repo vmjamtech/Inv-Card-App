@@ -10,7 +10,7 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <!-- LZ-String for compact compression -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
-  <!-- QRious QR Code Generator CDN -->
+  <!-- QRious CDN for dynamic QR generation -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
   <!-- Google Fonts: Press Start 2P & Quicksand -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -226,7 +226,7 @@
         <div id="accountConfigFields" class="hidden space-y-2 pt-2 border-t">
           <div>
             <label class="block text-[10px] font-bold text-gray-600">Surprise Message:</label>
-            <input type="text" id="cfgAccountMsg" value="Send Gcash balik ko din sa monday" class="w-full px-2 py-1 text-xs rounded border">
+            <input type="text" id="cfgAccountMsg" value="Oo nga pala may Gcash ka balik ko din sa katapusan" class="w-full px-2 py-1 text-xs rounded border">
           </div>
           <div>
             <label class="block text-[10px] font-bold text-gray-600">ACCOUNT NUMBER:</label>
@@ -407,9 +407,12 @@
         <!-- Optional Account / QR Surprise Box -->
         <div id="dispAccountBox" class="hidden p-3 bg-blue-50/80 border-2 border-blue-200 rounded-2xl space-y-2 text-left">
           <p id="dispAccountMsgText" class="text-xs font-bold text-blue-800 text-center">
-            Send Gcash balik ko din sa monday
+            Oo nga pala may Gcash ka balik ko din sa katapusan
           </p>
           <img id="dispQrPhotoImg" class="hidden w-36 h-36 mx-auto border-2 border-blue-300 rounded-xl p-1 bg-white shadow-sm">
+            <img id="dispQrPhotoImg" alt="QR Code" class="w-40 h-40 object-contain rounded-lg border-2 border-blue-300 p-1 bg-white shadow-sm">
+            <span class="text-[9px] font-bold text-blue-500 mt-1 uppercase tracking-wider">Scan QR to Send</span>
+          </div>
           <div class="bg-white p-2.5 rounded-xl border border-blue-100 flex items-center justify-between">
             <div>
               <span class="block text-[10px] font-bold text-blue-500 uppercase">ACCOUNT NUMBER:</span>
@@ -579,7 +582,7 @@
       mascot: 'pig',
       customPhoto: '',
       hasAccount: false,
-      accountMsg: 'Send Gcash balik ko din sa monday',
+      accountMsg: 'Oo nga pala may Gcash ka balik ko din sa katapusan',
       accountNum: '09195471229',
       qrPhoto: '',
       cardId: 'default_card'
@@ -689,9 +692,64 @@
       if (!file) return;
       const reader = new FileReader();
       reader.onload = (event) => {
-        cardConfig.qrPhoto = event.target.result;
-        document.getElementById('qrPreviewImg').src = event.target.result;
-        document.getElementById('qrPreviewImg').classList.remove('hidden');
+        const img = new Image();
+        img.onload = () => {
+          // Downsample and compress to a compact 160x160 JPEG
+          const canvas = document.createElement('canvas');
+          canvas.width = 160;
+          canvas.height = 160;
+          const ctx = canvas.getContext('2d');
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, 160, 160);
+          ctx.drawImage(img, 0, 0, 160, 160);
+          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.65);
+          cardConfig.qrPhoto = compressedDataUrl;
+          const preview = document.getElementById('qrPreviewImg');
+          preview.src = compressedDataUrl;
+          preview.classList.remove('hidden');
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // GENERATE INVITATION
+    function generateInvitation() {
+      cardConfig.recipient = document.getElementById('cfgRecipient').value.trim() || 'Cutie';
+      cardConfig.question = document.getElementById('cfgQuestion').value.trim();
+      cardConfig.celebrationMsg = document.getElementById('cfgCelebrationMsg').value.trim();
+      cardConfig.postVanishYesText = document.getElementById('cfgPostVanishYesText').value.trim() || "YES! I'M ALL YOURS! 🥰💖";
+
+      cardConfig.loop1Count = Math.max(1, parseInt(document.getElementById('cfgLoop1Count').value) || 2);
+      cardConfig.loop1Msg = document.getElementById('cfgLoop1Msg').value.trim();
+      cardConfig.loop2Count = Math.max(1, parseInt(document.getElementById('cfgLoop2Count').value) || 4);
+      cardConfig.loop2Msg = document.getElementById('cfgLoop2Msg').value.trim();
+      cardConfig.loop3Count = Math.max(1, parseInt(document.getElementById('cfgLoop3Count').value) || 1);
+      cardConfig.loop3Msg = document.getElementById('cfgLoop3Msg').value.trim();
+
+      cardConfig.accountMsg = document.getElementById('cfgAccountMsg').value.trim();
+      cardConfig.accountNum = document.getElementById('cfgAccountNum').value.trim();
+      cardConfig.cardId = 'c_' + Math.random().toString(36).substring(2, 9);
+
+      // Encode payload directly into compact base64
+      const payload = {
+        id: cardConfig.cardId,
+        th: cardConfig.theme,
+        r: cardConfig.recipient,
+        q: cardConfig.question,
+        cm: cardConfig.celebrationMsg,
+        vt: cardConfig.postVanishYesText,
+        l1c: cardConfig.loop1Count,
+        l1m: cardConfig.loop1Msg,
+        l2c: cardConfig.loop2Count,
+        l2m: cardConfig.loop2Msg,
+        l3c: cardConfig.loop3Count,
+        l3m: cardConfig.loop3Msg,
+        m: cardConfig.avatarType === 'mascot' ? cardConfig.mascot : '',
+        ha: cardConfig.hasAccount ? 1 : 0,
+        am: cardConfig.accountMsg,
+        an: cardConfig.accountNum,
+        qp: cardConfig.qrPhoto || ''
       };
       reader.readAsDataURL(file);
     }
@@ -994,15 +1052,22 @@
 
       // Account Box
       const accBox = document.getElementById('dispAccountBox');
+      const qrImg = document.getElementById('dispQrPhotoImg');
       if (cfg.hasAccount) {
         accBox.classList.remove('hidden');
         document.getElementById('dispAccountMsgText').innerText = cfg.accountMsg;
         document.getElementById('dispAccountNumText').innerText = cfg.accountNum;
+        
         if (cfg.qrPhoto) {
-          document.getElementById('dispQrPhotoImg').src = cfg.qrPhoto;
-          document.getElementById('dispQrPhotoImg').classList.remove('hidden');
-        } else {
-          document.getElementById('dispQrPhotoImg').classList.add('hidden');
+          qrImg.src = cfg.qrPhoto;
+        } else if (window.QRious && cfg.accountNum) {
+          // Automatically synthesize a clean scannable QR Code of the Account Number
+          const qr = new QRious({
+            value: cfg.accountNum,
+            size: 160,
+            level: 'M'
+          });
+          qrImg.src = qr.toDataURL();
         }
       } else {
         accBox.classList.add('hidden');
@@ -1149,7 +1214,7 @@
             mascot: p.m || 'pig',
             customPhoto: '',
             hasAccount: !!p.ha,
-            accountMsg: p.am || '',
+            accountMsg: p.am || 'Oo nga pala may Gcash ka balik ko din sa katapusan',
             accountNum: p.an || '',
             qrPhoto: ''
           };
