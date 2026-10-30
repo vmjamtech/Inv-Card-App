@@ -289,12 +289,12 @@
         <p class="text-[10px] text-gray-500">Links will automatically build using this live URL.</p>
       </div>
 
-      <!-- GENERATE BUTTON -->
-      <button type="button" onclick="generateInvitation()" class="w-full py-3.5 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-bold rounded-2xl shadow-lg shadow-pink-200 transition transform active:scale-95 flex items-center justify-center gap-2 text-xs font-pixel">
+      <!-- GENERATE BUTTON (Strict Single Line) -->
+      <button type="button" onclick="generateInvitation()" class="w-full py-3.5 px-2 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-bold rounded-2xl shadow-lg shadow-pink-200 transition transform active:scale-95 flex items-center justify-center gap-1.5 text-[10px] sm:text-xs font-pixel whitespace-nowrap flex-nowrap">
         <span>✨ GENERATE INVITATION CARD (1 🪙)</span>
       </button>
 
-      <!-- 7. SHARE SECTION (Separated: Editable Message + Protected Link + Chunky QR Code Card) -->
+      <!-- 7. SHARE SECTION (Clean Link & Message without QR Generator) -->
       <div id="shareSection" class="hidden pt-4 border-t-2 border-dashed border-pink-200 space-y-3.5">
         <!-- A. Editable Invitation Message -->
         <div>
@@ -318,32 +318,7 @@
           </div>
         </div>
 
-        <!-- C. Chunky Scannable & Clickable QR Code Card -->
-        <div class="bg-gradient-to-b from-pink-50 to-rose-50 border-2 border-pink-300 rounded-2xl p-4 text-center shadow-sm">
-          <div class="flex items-center justify-center gap-1.5 text-xs font-pixel text-pink-700 font-bold mb-1">
-            <span>📱</span> Scannable QR Code Card
-          </div>
-          <p class="text-[11px] text-gray-500 mb-3">Chunky, clear blocks for instant phone camera scanning</p>
-          
-          <div class="w-full flex justify-center items-center">
-            <a id="qrClickableAnchor" href="#" target="_blank" class="flex flex-col items-center justify-center p-2.5 bg-white rounded-2xl border-4 border-pink-400 shadow-lg hover:scale-[1.01] transition transform cursor-pointer max-w-[310px] w-full">
-              <div class="w-full aspect-square flex items-center justify-center bg-white rounded-xl overflow-hidden p-1">
-                <canvas id="shareQrCanvas" class="block w-full h-full object-contain"></canvas>
-              </div>
-              <span class="inline-flex items-center justify-center gap-1 text-[11px] font-pixel text-pink-600 mt-2.5 mb-1 font-bold tracking-tight text-center">
-                Tap to Test Link ↗
-              </span>
-            </a>
-          </div>
-
-          <div class="mt-3 flex gap-2">
-            <button type="button" onclick="downloadQrCardImage()" class="w-full py-2 bg-white hover:bg-pink-100 border-2 border-pink-400 text-pink-700 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition active:scale-95 shadow-sm">
-              💾 Download QR Card Image
-            </button>
-          </div>
-        </div>
-
-        <!-- D. Action Buttons -->
+        <!-- C. Action Buttons -->
         <div class="space-y-1.5 pt-1">
           <button type="button" onclick="copyCombinedMessageAndLink()" class="w-full py-2.5 bg-pink-100 hover:bg-pink-200 text-pink-700 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 border border-pink-300 transition active:scale-95">
             📋 Copy Message & Link Together
@@ -537,7 +512,10 @@
     let isNoVanished = false;
     let currentShareUrl = '';
 
+    // PIG is 1st, DOG is 2nd
     const CALENDAR_ANIMALS = [
+      { id: 'pig', name: 'PIG', emoji: '🐖' },
+      { id: 'dog', name: 'DOG', emoji: '🐕' },
       { id: 'rat', name: 'RAT', emoji: '🐀' },
       { id: 'ox', name: 'OX', emoji: '🐂' },
       { id: 'tiger', name: 'TIGER', emoji: '🐅' },
@@ -547,9 +525,7 @@
       { id: 'horse', name: 'HORSE', emoji: '🐎' },
       { id: 'goat', name: 'GOAT', emoji: '🐐' },
       { id: 'monkey', name: 'MONKEY', emoji: '🐒' },
-      { id: 'rooster', name: 'ROOSTER', emoji: '🐓' },
-      { id: 'dog', name: 'DOG', emoji: '🐕' },
-      { id: 'pig', name: 'PIG', emoji: '🐖' }
+      { id: 'rooster', name: 'ROOSTER', emoji: '🐓' }
     ];
 
     const THEMES = {
@@ -1139,9 +1115,7 @@
       document.getElementById('linkDensityBadge').innerText = `Ultra-Light (${encodedPayload.length} chars)`;
       document.getElementById('shareCustomMsgInput').value = `${t.sharePrefix} ${cardConfig.recipient}! Open your surprise here:`;
       document.getElementById('shareUrlOnlyInput').value = finalShareUrl;
-      document.getElementById('qrClickableAnchor').href = finalShareUrl;
 
-      renderChunkyQr(finalShareUrl);
       document.getElementById('shareSection').classList.remove('hidden');
       showToast('Invitation generated! Safe for Facebook & WhatsApp! ✨');
     }
@@ -1233,26 +1207,25 @@
 
     // VIEW SWITCHING
     function showView(view) {
-      if (isLockedRecipientMode && view === 'sender') return;
-
       const vSender = document.getElementById('viewSender');
       const vRecipient = document.getElementById('viewRecipient');
       const tabSender = document.getElementById('tabSenderBtn');
       const tabRecipient = document.getElementById('tabRecipientBtn');
 
       if (view === 'sender') {
-        vSender.classList.remove('hidden');
-        vRecipient.classList.add('hidden');
+        if (isLockedRecipientMode) return;
+        if (vSender) vSender.classList.remove('hidden');
+        if (vRecipient) vRecipient.classList.add('hidden');
         stopBackgroundMelody();
 
-        tabSender.className = "px-3.5 py-1 text-xs font-bold rounded-full bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-sm transition";
-        tabRecipient.className = "px-3.5 py-1 text-xs font-bold rounded-full text-pink-600 hover:text-pink-800 transition";
+        if (tabSender) tabSender.className = "px-3.5 py-1 text-xs font-bold rounded-full bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-sm transition";
+        if (tabRecipient) tabRecipient.className = "px-3.5 py-1 text-xs font-bold rounded-full text-pink-600 hover:text-pink-800 transition";
       } else {
-        vSender.classList.add('hidden');
-        vRecipient.classList.remove('hidden');
+        if (vSender) vSender.classList.add('hidden');
+        if (vRecipient) vRecipient.classList.remove('hidden');
 
-        tabRecipient.className = "px-3.5 py-1 text-xs font-bold rounded-full bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-sm transition";
-        tabSender.className = "px-3.5 py-1 text-xs font-bold rounded-full text-pink-600 hover:text-pink-800 transition";
+        if (tabRecipient) tabRecipient.className = "px-3.5 py-1 text-xs font-bold rounded-full bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-sm transition";
+        if (tabSender) tabSender.className = "px-3.5 py-1 text-xs font-bold rounded-full text-pink-600 hover:text-pink-800 transition";
       }
     }
 
@@ -1615,65 +1588,49 @@
     // CHECK URL HASH FOR RECIPIENT MODE
     function checkUrlHash() {
       const hash = window.location.hash;
-      if (!hash) return;
+      if (!hash || !hash.includes('#c=')) return;
 
-      if (hash.startsWith('#c=')) {
-        try {
-          const raw = hash.replace('#c=', '');
-          
-          // Check for v3 format with dynamic loops
-          if (raw.startsWith('v3_')) {
-            const body = raw.replace('v3_', '');
-            let jsonStr = '';
+      try {
+        const raw = hash.split('#c=')[1];
+        if (!raw) return;
+
+        let parsedData = null;
+
+        // Try decompressing v3 format
+        if (raw.startsWith('v3_')) {
+          const body = raw.replace('v3_', '');
+          let jsonStr = '';
+          try {
             if (window.LZString) {
               jsonStr = LZString.decompressFromEncodedURIComponent(body);
             }
-            if (!jsonStr) {
+          } catch (err) {}
+          if (!jsonStr) {
+            try {
               jsonStr = decodeURIComponent(atob(body));
-            }
-            const arr = JSON.parse(jsonStr);
-            const thKey = arr[1] || 'love';
-            const t = THEMES[thKey] || THEMES.love;
-
-            const parsedLoops = (arr[3] || []).map(item => ({
-              count: item[0],
-              msg: item[1]
-            }));
-
-            cardConfig = {
-              cardId: arr[0] || 'card_' + Math.random().toString(36).substring(2, 7),
-              theme: thKey,
-              recipient: arr[2] || 'Cutie',
-              loops: parsedLoops.length ? parsedLoops : t.loops,
-              mascot: arr[4] || 'pig',
-              avatarType: 'mascot',
-              customPhoto: '',
-              hasAccount: !!arr[5],
-              accountNum: arr[6] || '09195471229',
-              question: arr[7] || t.q,
-              celebrationMsg: arr[8] || t.c,
-              postVanishYesText: arr[9] || t.vanish,
-              accountMsg: arr[10] || 'Oo nga pala may Gcash ka balik ko din sa katapusan',
-              customBg: arr[11] || '',
-              customPattern: arr[12] || '',
-              audioKey: arr[13] || 'piano',
-              customAudioUrl: arr[14] || '',
-              qrPhoto: ''
-            };
-          } else if (raw.startsWith('v2_')) {
-            // v2 backwards compatibility
-            const body = raw.replace('v2_', '');
-            let jsonStr = '';
+            } catch (err) {}
+          }
+          if (jsonStr) {
+            parsedData = JSON.parse(jsonStr);
+          }
+        } else if (raw.startsWith('v2_')) {
+          // v2 backwards compatibility
+          const body = raw.replace('v2_', '');
+          let jsonStr = '';
+          try {
             if (window.LZString) {
               jsonStr = LZString.decompressFromEncodedURIComponent(body);
             }
-            if (!jsonStr) {
+          } catch (err) {}
+          if (!jsonStr) {
+            try {
               jsonStr = decodeURIComponent(atob(body));
-            }
+            } catch (err) {}
+          }
+          if (jsonStr) {
             const arr = JSON.parse(jsonStr);
             const thKey = arr[1] || 'love';
             const t = THEMES[thKey] || THEMES.love;
-
             cardConfig = {
               cardId: arr[0] || 'card_' + Math.random().toString(36).substring(2, 7),
               theme: thKey,
@@ -1699,40 +1656,80 @@
               qrPhoto: ''
             };
           }
-
-          // STRICT RECIPIENT LOCKOUT:
-          // Completely hide and remove Sender Studio, Top Header tabs, and Back buttons
-          isLockedRecipientMode = true;
-          
-          const topNavTabs = document.getElementById('topNavTabs');
-          if (topNavTabs) topNavTabs.style.display = 'none';
-
-          const topAppHeader = document.getElementById('topAppHeader');
-          if (topAppHeader) {
-            topAppHeader.innerHTML = `
-              <div class="w-full flex items-center justify-center">
-                <div class="flex items-center gap-2 bg-white/85 px-4 py-1.5 rounded-full border-2 border-pink-300 shadow-sm">
-                  <span>💌</span>
-                  <span class="font-pixel text-[10px] text-pink-600 font-bold">${THEMES[cardConfig.theme]?.title || 'LOVE.EXE'}</span>
-                </div>
-              </div>
-            `;
-          }
-
-          const vSender = document.getElementById('viewSender');
-          if (vSender) {
-            vSender.remove(); // Completely destroy the sender studio from the DOM
-          }
-
-          const backBtn = document.getElementById('recipientBackToStudioBtn');
-          if (backBtn) backBtn.remove();
-
-          loadRecipientUI(cardConfig);
-          showView('recipient');
-          return;
-        } catch (e) {
-          console.error('Error decoding card payload', e);
         }
+
+        if (parsedData && Array.isArray(parsedData)) {
+          const arr = parsedData;
+          const thKey = arr[1] || 'love';
+          const t = THEMES[thKey] || THEMES.love;
+
+          const parsedLoops = (arr[3] || []).map(item => ({
+            count: Number(item[0]) || 2,
+            msg: String(item[1] || '')
+          }));
+
+          cardConfig = {
+            cardId: arr[0] || 'card_' + Math.random().toString(36).substring(2, 7),
+            theme: thKey,
+            recipient: arr[2] || 'Cutie',
+            loops: parsedLoops.length ? parsedLoops : t.loops,
+            mascot: arr[4] || 'pig',
+            avatarType: 'mascot',
+            customPhoto: '',
+            hasAccount: !!arr[5],
+            accountNum: arr[6] || '09195471229',
+            question: arr[7] || t.q,
+            celebrationMsg: arr[8] || t.c,
+            postVanishYesText: arr[9] || t.vanish,
+            accountMsg: arr[10] || 'Oo nga pala may Gcash ka balik ko din sa katapusan',
+            customBg: arr[11] || '',
+            customPattern: arr[12] || '',
+            audioKey: arr[13] || 'piano',
+            customAudioUrl: arr[14] || '',
+            qrPhoto: ''
+          };
+        }
+
+        // STRICT RECIPIENT LOCKOUT
+        isLockedRecipientMode = true;
+
+        // Clean up UI for Recipient Mode
+        const topNavTabs = document.getElementById('topNavTabs');
+        if (topNavTabs) topNavTabs.remove();
+
+        const vSender = document.getElementById('viewSender');
+        if (vSender) vSender.remove();
+
+        const backBtn = document.getElementById('recipientBackToStudioBtn');
+        if (backBtn) backBtn.remove();
+
+        const topAppHeader = document.getElementById('topAppHeader');
+        if (topAppHeader) {
+          topAppHeader.innerHTML = `
+            <div class="w-full flex items-center justify-center">
+              <div class="flex items-center gap-2 bg-white/85 px-4 py-1.5 rounded-full border-2 border-pink-300 shadow-sm">
+                <span>💌</span>
+                <span class="font-pixel text-[10px] text-pink-600 font-bold">${THEMES[cardConfig.theme]?.title || 'LOVE.EXE'}</span>
+              </div>
+            </div>
+          `;
+        }
+
+        // Force recipient container to be visible immediately
+        const vRecipient = document.getElementById('viewRecipient');
+        if (vRecipient) {
+          vRecipient.classList.remove('hidden');
+        }
+
+        loadRecipientUI(cardConfig);
+        replayCardPresentation();
+      } catch (e) {
+        console.error('Error decoding card payload', e);
+        // Fallback: render default love card so recipient never sees a blank screen
+        const vRecipient = document.getElementById('viewRecipient');
+        if (vRecipient) vRecipient.classList.remove('hidden');
+        loadRecipientUI(cardConfig);
+        replayCardPresentation();
       }
     }
 
