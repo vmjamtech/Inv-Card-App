@@ -53,9 +53,6 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between items-center p-3 sm:p-5 text-gray-800">
 
-  <!-- BACKGROUND AUDIO ELEMENT -->
-  <audio id="bgmAudioPlayer" loop preload="auto"></audio>
-
   <!-- TOP APP HEADER BAR -->
   <header id="topAppHeader" class="w-full max-w-md mx-auto flex items-center justify-between mb-3 z-30">
     <div class="flex items-center gap-2 bg-white/85 backdrop-blur-md px-3.5 py-1.5 rounded-full border-2 border-pink-300 shadow-sm">
@@ -64,7 +61,7 @@
     </div>
     
     <div class="flex items-center gap-2">
-      <!-- Token Credit Pill (Clickable to Top Up) -->
+      <!-- Token Credit Pill -->
       <button type="button" onclick="openCreditTopupModal()" class="flex items-center gap-1.5 bg-amber-50 hover:bg-amber-100 border-2 border-amber-300 px-3 py-1 rounded-full text-xs font-bold text-amber-800 shadow-sm transition active:scale-95">
         <span>🪙</span>
         <span id="creditBalanceBadge" class="font-pixel text-[10px]">5 Credits</span>
@@ -90,7 +87,7 @@
     <!-- ============================================== -->
     <div id="viewSender" class="w-full bg-white/95 backdrop-blur-md rounded-3xl p-5 sm:p-6 pixel-card space-y-4">
       
-      <!-- 1. CHOOSE THEME (5 Dynamic Themes) -->
+      <!-- 1. CHOOSE THEME (5 Themes) -->
       <div>
         <div class="flex items-center justify-between mb-1.5">
           <label class="text-xs font-bold uppercase font-pixel text-pink-600 flex items-center gap-1.5">
@@ -142,7 +139,7 @@
           <span class="text-[9px] text-pink-600 bg-pink-100 px-2 py-0.5 rounded-full font-bold">Vanishes after final loop</span>
         </div>
 
-        <!-- Container populated with editable loops -->
+        <!-- Dynamic loops container -->
         <div id="dynamicLoopsContainer" class="space-y-2.5"></div>
 
         <!-- Add Loop Stage Button -->
@@ -237,65 +234,13 @@
         </div>
       </section>
 
-      <!-- 6. MASCOT (PIG 1st, DOG 2nd) OR CUSTOM PHOTO -->
+      <!-- 6. MASCOT SELECTION (PIG 1st, DOG 2nd) -->
       <section class="space-y-2">
         <div class="flex items-center justify-between">
-          <label class="text-xs font-bold text-gray-700 uppercase">Choose Mascot or Photo</label>
-          <div class="flex items-center gap-3 text-xs">
-            <label class="flex items-center gap-1 cursor-pointer">
-              <input type="radio" name="avatarType" value="mascot" checked onchange="toggleAvatarChoice('mascot')" class="text-pink-500">
-              <span class="font-bold">Mascot</span>
-            </label>
-            <label class="flex items-center gap-1 cursor-pointer">
-              <input type="radio" name="avatarType" value="photo" onchange="toggleAvatarChoice('photo')" class="text-pink-500">
-              <span class="font-bold">Upload Photo</span>
-            </label>
-          </div>
+          <label class="text-xs font-bold text-gray-700 uppercase">Choose Mascot</label>
+          <span class="text-[10px] text-pink-600 font-bold">12 Zodiac Animals</span>
         </div>
-
-        <!-- 12 Calendar Animals with PIG 1st & DOG 2nd -->
         <div id="mascotPickerBox" class="grid grid-cols-4 gap-1.5 max-h-36 overflow-y-auto p-1.5 border rounded-xl bg-gray-50"></div>
-
-        <!-- Upload Photo Area -->
-        <div id="photoUploadBox" class="hidden p-3 border-2 border-dashed border-pink-300 rounded-xl bg-pink-50/50 text-center">
-          <input type="file" id="photoFileInput" accept="image/*" class="text-xs" onchange="handlePhotoUpload(event)">
-          <p class="text-[11px] text-gray-500 mt-1">Upload picture or avatar to replace mascot</p>
-          <div id="photoPreviewBox" class="hidden mt-2">
-            <img id="photoPreviewImg" class="w-16 h-16 object-cover mx-auto rounded-full border-2 border-pink-400 shadow" alt="Photo Preview">
-          </div>
-        </div>
-      </section>
-
-      <!-- 7. OPTIONAL GCASH / ACCOUNT SURPRISE -->
-      <section class="p-3 border rounded-xl bg-gray-50 space-y-2">
-        <div class="flex items-center justify-between">
-          <div>
-            <span class="text-xs font-bold text-gray-700 block">Account / GCash Surprise</span>
-            <span class="text-[10px] text-gray-500">Show copyable Account Number & QR on celebration</span>
-          </div>
-          <label class="relative inline-flex items-center cursor-pointer">
-            <input type="checkbox" id="toggleAccountBox" class="sr-only peer" onchange="toggleAccountSection()">
-            <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-pink-500"></div>
-          </label>
-        </div>
-
-        <div id="accountConfigFields" class="hidden space-y-2 pt-2 border-t">
-          <div>
-            <label class="block text-[10px] font-bold text-gray-600">Surprise Message:</label>
-            <input type="text" id="cfgAccountMsg" value="Oo nga pala may Gcash ka balik ko din sa katapusan" class="w-full px-2 py-1 text-xs rounded border">
-          </div>
-          <div>
-            <label class="block text-[10px] font-bold text-gray-600">ACCOUNT NUMBER:</label>
-            <input type="text" id="cfgAccountNum" value="09195471229" class="w-full px-2 py-1 text-xs rounded border font-mono">
-          </div>
-          <div>
-            <label class="block text-[10px] font-bold text-gray-600">Upload GCash QR Code Image (Optional):</label>
-            <input type="file" id="qrFileInput" accept="image/*" class="text-xs w-full block file:mr-2 file:py-1 file:px-2.5 file:rounded file:border-0 file:text-[10px] file:bg-blue-100 file:text-blue-700" onchange="handleQrUpload(event)">
-            <div id="qrPreviewBox" class="hidden mt-2 text-center">
-              <img id="qrPreviewImg" class="w-24 h-24 object-contain mx-auto rounded-lg border border-blue-300 shadow-sm" alt="QR Preview">
-            </div>
-          </div>
-        </div>
       </section>
 
       <!-- VERCEL URL CONFIG -->
@@ -307,12 +252,12 @@
         <p class="text-[10px] text-gray-500">Links will automatically build using this live URL.</p>
       </div>
 
-      <!-- GENERATE INVITATION BUTTON (Strictly single line) -->
+      <!-- GENERATE INVITATION BUTTON (Strictly single-line) -->
       <button type="button" onclick="generateInvitation()" class="w-full py-3.5 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-bold rounded-2xl shadow-lg shadow-pink-200 transition transform active:scale-95 flex items-center justify-center text-[11px] sm:text-xs font-pixel whitespace-nowrap overflow-hidden">
         ✨ GENERATE INVITATION CARD (1 🪙)
       </button>
 
-      <!-- 8. SHARE SECTION (Clean: No QR code card, only short link & share buttons) -->
+      <!-- 7. SHARE SECTION -->
       <div id="shareSection" class="hidden pt-4 border-t-2 border-dashed border-pink-200 space-y-3">
         <!-- Editable Message -->
         <div>
@@ -396,7 +341,7 @@
             Will you go out with me? 💖
           </h3>
 
-          <!-- Avatar Display (Mascot or Uploaded Photo) -->
+          <!-- Mascot Display -->
           <div class="relative w-28 h-28 mx-auto my-1 flex items-center justify-center bg-white/80 rounded-2xl border-2 border-pink-200 shadow-inner overflow-hidden">
             <div id="dispAvatarBox" class="w-full h-full flex flex-col items-center justify-center p-2 animate-wobble"></div>
           </div>
@@ -429,29 +374,6 @@
           I know you will answer yes since you like me very very much! 🥰✨
         </p>
 
-        <!-- Optional Account Surprise Box -->
-        <div id="dispAccountBox" class="hidden p-4 bg-blue-50/90 border-2 border-blue-200 rounded-2xl space-y-3 text-center">
-          <p id="dispAccountMsgText" class="text-xs font-bold text-blue-900 leading-snug px-2">
-            Oo nga pala may Gcash ka balik ko din sa katapusan
-          </p>
-
-          <div class="bg-white p-2.5 rounded-xl border border-blue-100 flex items-center justify-between text-left shadow-sm">
-            <div>
-              <span class="block text-[10px] font-bold text-blue-500 uppercase">ACCOUNT NUMBER:</span>
-              <span id="dispAccountNumText" class="text-xs font-mono font-bold text-gray-800">09195471229</span>
-            </div>
-            <button type="button" onclick="copyRecipientAccount()" class="px-2.5 py-1 bg-blue-500 hover:bg-blue-600 text-white text-[11px] font-bold rounded-lg transition active:scale-95">
-              Copy
-            </button>
-          </div>
-
-          <!-- Display Uploaded QR Code -->
-          <div id="dispQrContainer" class="hidden bg-white p-3 rounded-xl border border-blue-100 shadow-sm text-center">
-            <span class="block text-[10px] font-bold text-blue-500 uppercase mb-2">Scan GCash QR Code:</span>
-            <img id="dispQrImage" class="w-36 h-36 object-contain mx-auto rounded-lg border border-blue-200 shadow-sm" alt="GCash QR">
-          </div>
-        </div>
-
         <!-- Replay & Back Buttons -->
         <div class="pt-2 flex flex-col gap-2">
           <button type="button" onclick="replayCardPresentation()" class="w-full py-2.5 bg-pink-500 hover:bg-pink-600 text-white font-bold rounded-xl text-xs transition active:scale-95 flex items-center justify-center gap-1.5 shadow">
@@ -481,7 +403,7 @@
 
         <div class="text-4xl">🪙💌</div>
         <h3 class="font-pixel text-sm text-pink-600 font-bold">Top-Up Invitation Credits</h3>
-        <p class="text-xs text-gray-500">Need more cards? Redeem an instant voucher or log your GCash reference to get tokens immediately!</p>
+        <p class="text-xs text-gray-500">Need more cards? Redeem an instant voucher code below to refill credits.</p>
 
         <!-- Current Balance Display -->
         <div class="p-3 bg-pink-50 rounded-2xl border border-pink-200 flex justify-between items-center text-xs">
@@ -491,22 +413,14 @@
 
         <!-- Voucher Input -->
         <div class="text-left space-y-1.5">
-          <label class="block text-[11px] font-bold text-gray-700">Enter Voucher Code or GCash Ref #:</label>
+          <label class="block text-[11px] font-bold text-gray-700">Enter Voucher Code:</label>
           <div class="flex gap-1.5">
-            <input type="text" id="voucherCodeInput" placeholder="e.g. FREE5 or 13-digit Ref" class="w-full px-3 py-2 text-xs rounded-xl border-2 border-pink-200 font-mono uppercase focus:outline-none focus:border-pink-500">
+            <input type="text" id="voucherCodeInput" placeholder="e.g. FREE5 or LOVE10" class="w-full px-3 py-2 text-xs rounded-xl border-2 border-pink-200 font-mono uppercase focus:outline-none focus:border-pink-500">
             <button type="button" onclick="redeemVoucherCode()" class="px-3.5 py-2 bg-pink-500 hover:bg-pink-600 text-white font-bold rounded-xl text-xs active:scale-95 transition">
               Redeem
             </button>
           </div>
           <p id="voucherAlertMsg" class="text-[10px] text-gray-400">Sample quick test codes: <strong class="text-pink-600">FREE5</strong>, <strong class="text-pink-600">LOVE10</strong></p>
-        </div>
-
-        <!-- GCash Manual Transfer Info -->
-        <div class="p-3 bg-blue-50/80 rounded-2xl border border-blue-200 text-left text-[11px] space-y-1 text-blue-900">
-          <p class="font-bold flex items-center gap-1"><span>💳</span> Direct GCash Top-up:</p>
-          <p>Send ₱29 for 5 credits / ₱49 for 10 credits to:</p>
-          <p class="font-mono font-bold text-blue-700">09195471229 (V*** M.)</p>
-          <p class="text-[9px] text-blue-500">Paste your GCash reference number above for instant activation.</p>
         </div>
       </div>
     </div>
@@ -661,18 +575,12 @@
         { count: 2, msg: 'You can\'t escape! 💕' }
       ],
       mascot: 'pig',
-      avatarType: 'mascot',
-      customPhoto: '',
-      hasAccount: false,
-      accountMsg: 'Oo nga pala may Gcash ka balik ko din sa katapusan',
-      accountNum: '09195471229',
-      qrImage: '',
       customBg: '#ffd6e0',
       customPattern: '#ffccd5',
       audioKey: 'love_piano'
     };
 
-    // 2. WEB AUDIO API SYNTHESIZER (15 THEMATIC COMPOSITIONS)
+    // 2. PROCEDURAL WEB AUDIO SYNTHESIZER (15 THEMATIC TRACKS)
     let audioCtx = null;
     let synthInterval = null;
     let isSynthPlaying = false;
@@ -698,7 +606,7 @@
       C6: 1046.50
     };
 
-    function playTone(freq, type = 'sine', duration = 0.8, volume = 0.22, delay = 0) {
+    function playTone(freq, type = 'sine', duration = 0.8, volume = 0.20, delay = 0) {
       const ctx = getAudioContext();
       if (!ctx || isAudioMuted) return;
 
@@ -1104,7 +1012,7 @@
       const alertMsg = document.getElementById('voucherAlertMsg');
 
       if (!val) {
-        alertMsg.innerText = 'Please enter a voucher code or reference number!';
+        alertMsg.innerText = 'Please enter a voucher code!';
         alertMsg.className = 'text-[10px] text-rose-600 font-bold';
         return;
       }
@@ -1123,15 +1031,8 @@
         alertMsg.className = 'text-[10px] text-emerald-600 font-bold';
         input.value = '';
         setTimeout(closeCreditTopupModal, 1200);
-      } else if (/^\d{11,14}$/.test(val)) {
-        userCredits += 10;
-        updateCreditDisplay();
-        alertMsg.innerText = `✅ GCash Ref #${val} accepted! +10 Credits added!`;
-        alertMsg.className = 'text-[10px] text-emerald-600 font-bold';
-        input.value = '';
-        setTimeout(closeCreditTopupModal, 1500);
       } else {
-        alertMsg.innerText = 'Invalid voucher code or reference number. Please try again.';
+        alertMsg.innerText = 'Invalid voucher code. Please try again.';
         alertMsg.className = 'text-[10px] text-rose-600 font-bold';
       }
     }
@@ -1195,9 +1096,6 @@
       cardConfig.question = document.getElementById('cfgQuestion').value.trim();
       cardConfig.celebrationMsg = document.getElementById('cfgCelebrationMsg').value.trim();
       cardConfig.postVanishYesText = document.getElementById('cfgPostVanishYesText').value.trim() || "YES! I'M ALL YOURS! 🥰💖";
-
-      cardConfig.accountMsg = document.getElementById('cfgAccountMsg').value.trim();
-      cardConfig.accountNum = document.getElementById('cfgAccountNum').value.trim();
       cardConfig.cardId = 'c_' + Math.random().toString(36).substring(2, 9);
 
       const t = THEMES[cardConfig.theme] || THEMES.love;
@@ -1206,23 +1104,19 @@
 
       const packedLoops = cardConfig.loops.map(l => [l.count, l.msg]);
 
+      // Ultra-lean array schema keeps link <140 characters
       const compactData = [
-        cardConfig.cardId,                      // 0: id
-        cardConfig.theme,                       // 1: theme
-        cardConfig.recipient,                   // 2: recipient name
-        packedLoops,                            // 3: dynamic loops
-        cardConfig.avatarType === 'mascot' ? cardConfig.mascot : 'pig', // 4: mascot
-        cardConfig.hasAccount ? 1 : 0,          // 5: hasAccount
-        cardConfig.hasAccount ? cardConfig.accountNum : '', // 6: accountNum
-        cardConfig.question !== t.q ? cardConfig.question : '',   // 7: custom Q
-        cardConfig.celebrationMsg !== t.c ? cardConfig.celebrationMsg : '', // 8: custom celebration
-        cardConfig.postVanishYesText !== t.vanish ? cardConfig.postVanishYesText : '', // 9: custom post-vanish text
-        cardConfig.hasAccount && cardConfig.accountMsg !== 'Oo nga pala may Gcash ka balik ko din sa katapusan' ? cardConfig.accountMsg : '', // 10: acct msg
-        isCustomBg ? cardConfig.customBg : '',  // 11: custom bg
-        isCustomPattern ? cardConfig.customPattern : '', // 12: custom pattern
-        cardConfig.audioKey,                    // 13: audio key
-        cardConfig.avatarType === 'photo' && cardConfig.customPhoto ? cardConfig.customPhoto : '', // 14: photo
-        cardConfig.hasAccount && cardConfig.qrImage ? cardConfig.qrImage : '' // 15: QR code image
+        cardConfig.cardId,
+        cardConfig.theme,
+        cardConfig.recipient,
+        packedLoops,
+        cardConfig.mascot || 'pig',
+        cardConfig.question !== t.q ? cardConfig.question : '',
+        cardConfig.celebrationMsg !== t.c ? cardConfig.celebrationMsg : '',
+        cardConfig.postVanishYesText !== t.vanish ? cardConfig.postVanishYesText : '',
+        isCustomBg ? cardConfig.customBg : '',
+        isCustomPattern ? cardConfig.customPattern : '',
+        cardConfig.audioKey || 'love_piano'
       ];
 
       while (compactData.length > 5 && compactData[compactData.length - 1] === '') {
@@ -1230,19 +1124,21 @@
       }
 
       const jsonStr = JSON.stringify(compactData);
-      let encodedPayload = 'v3_' + (window.LZString ? LZString.compressToEncodedURIComponent(jsonStr) : btoa(encodeURIComponent(jsonStr)));
+      const encodedPayload = 'v3_' + (window.LZString ? LZString.compressToEncodedURIComponent(jsonStr) : btoa(encodeURIComponent(jsonStr)));
 
       let baseUrl = document.getElementById('cfgVercelUrl').value.trim() || window.location.origin;
       baseUrl = baseUrl.replace(/\/+$/, '');
-      let finalShareUrl = `${baseUrl}/#c=${encodedPayload}`;
+      const finalShareUrl = `${baseUrl}/#c=${encodedPayload}`;
       currentShareUrl = finalShareUrl;
 
-      document.getElementById('linkDensityBadge').innerText = `Ultra-Light (${encodedPayload.length} chars)`;
+      const badge = document.getElementById('linkDensityBadge');
+      if (badge) badge.innerText = `Ultra-Light (${encodedPayload.length} chars)`;
+      
       document.getElementById('shareCustomMsgInput').value = `${t.sharePrefix} ${cardConfig.recipient}! Open your surprise here:`;
       document.getElementById('shareUrlOnlyInput').value = finalShareUrl;
 
       document.getElementById('shareSection').classList.remove('hidden');
-      showToast('Invitation generated! Safe for Facebook & WhatsApp! ✨');
+      showToast('Invitation generated! Short link ready. ✨');
     }
 
     // 7. ENVELOPE OPENING & RECIPIENT LOGIC
@@ -1277,38 +1173,15 @@
       document.getElementById('dispQuestionText').innerText = cfg.question;
 
       const avatarBox = document.getElementById('dispAvatarBox');
-      if (cfg.avatarType === 'photo' && cfg.customPhoto) {
-        avatarBox.innerHTML = `<img src="${cfg.customPhoto}" class="w-20 h-20 rounded-full object-cover border-2 border-pink-400 shadow" alt="Avatar">`;
-      } else {
-        const anim = CALENDAR_ANIMALS.find(a => a.id === cfg.mascot) || CALENDAR_ANIMALS[0];
-        avatarBox.innerHTML = `
-          <span class="text-5xl">${anim.emoji}</span>
-          <span class="text-[10px] font-bold text-pink-700 mt-1 uppercase">${anim.name}</span>
-        `;
-      }
+      const anim = CALENDAR_ANIMALS.find(a => a.id === cfg.mascot) || CALENDAR_ANIMALS[0];
+      avatarBox.innerHTML = `
+        <span class="text-5xl">${anim.emoji}</span>
+        <span class="text-[10px] font-bold text-pink-700 mt-1 uppercase">${anim.name}</span>
+      `;
 
       document.getElementById('dispCelebrationEmoji').innerText = t.celebrationEmoji;
       document.getElementById('dispCelebrationTitle').innerText = t.celebrationTitle;
       document.getElementById('dispCelebrationText').innerText = cfg.celebrationMsg;
-
-      const accBox = document.getElementById('dispAccountBox');
-      const qrContainer = document.getElementById('dispQrContainer');
-      const qrImg = document.getElementById('dispQrImage');
-
-      if (cfg.hasAccount) {
-        accBox.classList.remove('hidden');
-        document.getElementById('dispAccountMsgText').innerText = cfg.accountMsg || 'Oo nga pala may Gcash ka balik ko din sa katapusan';
-        document.getElementById('dispAccountNumText').innerText = cfg.accountNum || '09195471229';
-
-        if (cfg.qrImage) {
-          qrContainer.classList.remove('hidden');
-          qrImg.src = cfg.qrImage;
-        } else {
-          qrContainer.classList.add('hidden');
-        }
-      } else {
-        accBox.classList.add('hidden');
-      }
 
       resetButtonsState();
     }
@@ -1342,8 +1215,6 @@
       cardConfig.question = document.getElementById('cfgQuestion').value.trim();
       cardConfig.celebrationMsg = document.getElementById('cfgCelebrationMsg').value.trim();
       cardConfig.postVanishYesText = document.getElementById('cfgPostVanishYesText').value.trim() || "YES! I'M ALL YOURS! 🥰💖";
-      cardConfig.accountMsg = document.getElementById('cfgAccountMsg').value.trim();
-      cardConfig.accountNum = document.getElementById('cfgAccountNum').value.trim();
 
       loadRecipientUI(cardConfig);
       replayCardPresentation();
@@ -1371,94 +1242,6 @@
         };
         container.appendChild(btn);
       });
-    }
-
-    function toggleAvatarChoice(type) {
-      cardConfig.avatarType = type;
-      if (type === 'mascot') {
-        document.getElementById('mascotPickerBox').classList.remove('hidden');
-        document.getElementById('photoUploadBox').classList.add('hidden');
-      } else {
-        document.getElementById('mascotPickerBox').classList.add('hidden');
-        document.getElementById('photoUploadBox').classList.remove('hidden');
-      }
-    }
-
-    function handlePhotoUpload(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const img = new Image();
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          const maxDim = 140;
-          let w = img.width;
-          let h = img.height;
-          if (w > h) {
-            if (w > maxDim) { h = Math.round((h * maxDim) / w); w = maxDim; }
-          } else {
-            if (h > maxDim) { w = Math.round((w * maxDim) / h); h = maxDim; }
-          }
-          canvas.width = w;
-          canvas.height = h;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, w, h);
-
-          cardConfig.customPhoto = canvas.toDataURL('image/jpeg', 0.65);
-          const previewImg = document.getElementById('photoPreviewImg');
-          if (previewImg) previewImg.src = cardConfig.customPhoto;
-          document.getElementById('photoPreviewBox').classList.remove('hidden');
-          showToast('Photo uploaded & compressed! 📸');
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function handleQrUpload(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const img = new Image();
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          const maxDim = 180;
-          let w = img.width;
-          let h = img.height;
-          if (w > h) {
-            if (w > maxDim) { h = Math.round((h * maxDim) / w); w = maxDim; }
-          } else {
-            if (h > maxDim) { w = Math.round((w * maxDim) / h); h = maxDim; }
-          }
-          canvas.width = w;
-          canvas.height = h;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, w, h);
-
-          cardConfig.qrImage = canvas.toDataURL('image/jpeg', 0.65);
-          const previewImg = document.getElementById('qrPreviewImg');
-          if (previewImg) previewImg.src = cardConfig.qrImage;
-          document.getElementById('qrPreviewBox').classList.remove('hidden');
-          showToast('GCash QR Code uploaded! 💳');
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function toggleAccountSection() {
-      const isChecked = document.getElementById('toggleAccountBox').checked;
-      cardConfig.hasAccount = isChecked;
-      const fields = document.getElementById('accountConfigFields');
-      if (isChecked) {
-        fields.classList.remove('hidden');
-      } else {
-        fields.classList.add('hidden');
-      }
     }
 
     function copyLinkOnly() {
@@ -1496,21 +1279,6 @@
       const url = document.getElementById('shareUrlOnlyInput').value.trim();
       const text = encodeURIComponent(`${msg}\n${url}`);
       window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
-    }
-
-    function copyRecipientAccount() {
-      const acc = document.getElementById('dispAccountNumText').innerText.trim();
-      const tempInput = document.createElement('input');
-      tempInput.value = acc;
-      document.body.appendChild(tempInput);
-      tempInput.select();
-      try {
-        document.execCommand('copy');
-        showToast('Account Number copied! 💳');
-      } catch (err) {
-        console.error('Copy failed', err);
-      }
-      document.body.removeChild(tempInput);
     }
 
     function showToast(text) {
@@ -1653,16 +1421,6 @@
               jsonStr = decodeURIComponent(atob(body));
             }
             arr = JSON.parse(jsonStr);
-          } else if (raw.startsWith('v2_')) {
-            const body = raw.replace('v2_', '');
-            let jsonStr = '';
-            if (window.LZString) {
-              jsonStr = LZString.decompressFromEncodedURIComponent(body);
-            }
-            if (!jsonStr) {
-              jsonStr = decodeURIComponent(atob(body));
-            }
-            arr = JSON.parse(jsonStr);
           }
 
           if (arr) {
@@ -1680,18 +1438,12 @@
               recipient: arr[2] || 'Cutie',
               loops: parsedLoops.length ? parsedLoops : t.loops,
               mascot: arr[4] || 'pig',
-              avatarType: arr[14] ? 'photo' : 'mascot',
-              customPhoto: arr[14] || '',
-              hasAccount: !!arr[5],
-              accountNum: arr[6] || '09195471229',
-              question: arr[7] || t.q,
-              celebrationMsg: arr[8] || t.c,
-              postVanishYesText: arr[9] || t.vanish,
-              accountMsg: arr[10] || 'Oo nga pala may Gcash ka balik ko din sa katapusan',
-              customBg: arr[11] || '',
-              customPattern: arr[12] || '',
-              audioKey: arr[13] || t.defaultBgm || 'love_piano',
-              qrImage: arr[15] || ''
+              question: arr[5] || t.q,
+              celebrationMsg: arr[6] || t.c,
+              postVanishYesText: arr[7] || t.vanish,
+              customBg: arr[8] || '',
+              customPattern: arr[9] || '',
+              audioKey: arr[10] || t.defaultBgm || 'love_piano'
             };
           }
 
