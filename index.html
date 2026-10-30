@@ -10,6 +10,8 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <!-- LZ-String for compact compression -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
+  <!-- QRious QR Code Generator CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
   <!-- Google Fonts: Press Start 2P & Quicksand -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -276,7 +278,42 @@
           </div>
         </div>
 
-        <!-- C. Action Buttons -->
+        <!-- C. Hyperlink Masking Buttons -->
+        <div class="p-3 bg-pink-100/70 border border-pink-300 rounded-2xl space-y-2">
+          <span class="text-[10px] font-bold font-pixel text-pink-700 block uppercase">✨ Masked Hyperlinks (Hides Long URL)</span>
+          <div class="grid grid-cols-2 gap-2 text-xs font-bold">
+            <button type="button" onclick="copyRichHyperlink()" class="py-2.5 px-2 bg-rose-500 hover:bg-rose-600 text-white rounded-xl shadow-sm flex items-center justify-center gap-1 active:scale-95 transition text-[11px]">
+              🔗 Copy Rich Link (Chats)
+            </button>
+            <button type="button" onclick="copyMarkdownLink()" class="py-2.5 px-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl shadow-sm flex items-center justify-center gap-1 active:scale-95 transition text-[11px]">
+              📝 Copy Markdown Link
+            </button>
+          </div>
+          <p class="text-[10px] text-gray-500 text-center">Pastes purely as clean text like <u>"💌 Open Surprise for [Name]"</u> without showing long codes!</p>
+        </div>
+
+        <!-- D. Dynamic Scannable & Clickable QR Code Card -->
+        <div class="p-3 bg-white border-2 border-pink-300 rounded-2xl text-center space-y-2 shadow-sm">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-bold font-pixel text-pink-600">📱 Scannable & Clickable QR Card</span>
+            <span class="text-[9px] bg-pink-100 text-pink-700 font-bold px-2 py-0.5 rounded-full">Tap QR to Open</span>
+          </div>
+
+          <div class="p-3 bg-pink-50 rounded-xl border border-pink-200 inline-block">
+            <a id="qrDirectLink" href="#" target="_blank" title="Click to test or open card directly">
+              <canvas id="shareQrCanvas" class="mx-auto rounded-lg shadow-sm border border-pink-200 cursor-pointer hover:opacity-90 transition"></canvas>
+            </a>
+            <div class="text-[11px] font-bold text-pink-700 mt-2 font-pixel" id="qrCardRecipientLabel">💌 FOR CUTIE</div>
+          </div>
+
+          <div class="flex items-center justify-center gap-2 pt-1 text-xs">
+            <button type="button" onclick="downloadQrCard()" class="w-full py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl flex items-center justify-center gap-1 active:scale-95 transition">
+              💾 Download QR Card Image
+            </button>
+          </div>
+        </div>
+
+        <!-- E. Action Buttons -->
         <div class="space-y-1.5 pt-1">
           <button type="button" onclick="copyCombinedMessageAndLink()" class="w-full py-2.5 bg-pink-100 hover:bg-pink-200 text-pink-700 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 border border-pink-300 transition active:scale-95">
             📋 Copy Message & Link Together
@@ -719,7 +756,115 @@
       document.getElementById('shareCustomMsgInput').value = `${t.sharePrefix} ${cardConfig.recipient}! Open your surprise here:`;
       document.getElementById('shareUrlOnlyInput').value = shareUrl;
 
+      // Update Dynamic QR Code Card & Direct Link
+      document.getElementById('qrDirectLink').href = shareUrl;
+      document.getElementById('qrCardRecipientLabel').innerText = `💌 FOR ${cardConfig.recipient.toUpperCase()}`;
+
+      if (window.QRious) {
+        new QRious({
+          element: document.getElementById('shareQrCanvas'),
+          value: shareUrl,
+          size: 160,
+          background: '#ffffff',
+          foreground: '#ff4d6d',
+          level: 'M'
+        });
+      }
+
       document.getElementById('shareSection').classList.remove('hidden');
+    }
+
+    // HYPERLINK MASKING ACTIONS
+    function copyRichHyperlink() {
+      const url = document.getElementById('shareUrlOnlyInput').value.trim();
+      const label = `💌 Open Secret Surprise: Invitation for ${cardConfig.recipient}!`;
+      const htmlSnippet = `<a href="${url}" style="color:#ff4d6d; font-weight:bold; text-decoration:underline;">${label}</a>`;
+
+      if (navigator.clipboard && window.ClipboardItem) {
+        const textBlob = new Blob([`${label} (${url})`], { type: 'text/plain' });
+        const htmlBlob = new Blob([htmlSnippet], { type: 'text/html' });
+        navigator.clipboard.write([
+          new ClipboardItem({
+            'text/plain': textBlob,
+            'text/html': htmlBlob
+          })
+        ]).then(() => {
+          alert('Copied Rich Hyperlink! When pasted into Messenger, Telegram, Apple Notes, or Docs, it will display as clean clickable text without the long link code! 💌');
+        }).catch(() => fallbackCopy(url));
+      } else {
+        fallbackCopy(url);
+      }
+    }
+
+    function copyMarkdownLink() {
+      const url = document.getElementById('shareUrlOnlyInput').value.trim();
+      const md = `[💌 Open Surprise: Invitation for ${cardConfig.recipient}! ✨](${url})`;
+      fallbackCopy(md, 'Markdown Link copied! Perfect for Telegram, Discord, Slack, and Reddit! 📝');
+    }
+
+    function downloadQrCard() {
+      const qrCanvas = document.getElementById('shareQrCanvas');
+      if (!qrCanvas) return;
+
+      // Draw decorated card on off-screen canvas
+      const offscreen = document.createElement('canvas');
+      offscreen.width = 300;
+      offscreen.height = 360;
+      const ctx = offscreen.getContext('2d');
+
+      // Card Background
+      ctx.fillStyle = '#fff0f3';
+      ctx.fillRect(0, 0, 300, 360);
+
+      // Pink Border
+      ctx.lineWidth = 6;
+      ctx.strokeStyle = '#ff758f';
+      ctx.strokeRect(6, 6, 288, 348);
+
+      // Header Text
+      ctx.fillStyle = '#ff4d6d';
+      ctx.font = 'bold 15px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(`💌 FOR ${cardConfig.recipient.toUpperCase()}`, 150, 42);
+
+      ctx.fillStyle = '#666';
+      ctx.font = '11px sans-serif';
+      ctx.fillText('Scan with Camera to Open', 150, 62);
+
+      // Draw QR Image
+      ctx.drawImage(qrCanvas, 70, 80, 160, 160);
+
+      // Footer
+      ctx.fillStyle = '#ff4d6d';
+      ctx.font = 'bold 12px sans-serif';
+      ctx.fillText('LOVE.EXE Interactive Card', 150, 275);
+
+      ctx.fillStyle = '#888';
+      ctx.font = '10px sans-serif';
+      ctx.fillText('Tap or scan to reveal your surprise ✨', 150, 298);
+
+      const downloadLink = document.createElement('a');
+      downloadLink.download = `Invite_QR_${cardConfig.recipient.replace(/\s+/g, '_')}.png`;
+      downloadLink.href = offscreen.toDataURL('image/png');
+      downloadLink.click();
+    }
+
+    function fallbackCopy(text, msg = 'Copied to clipboard! 📋') {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(() => alert(msg)).catch(() => execCopy(text, msg));
+      } else {
+        execCopy(text, msg);
+      }
+    }
+
+    function execCopy(text, msg) {
+      const temp = document.createElement('textarea');
+      temp.value = text;
+      document.body.appendChild(temp);
+      temp.select();
+      document.execCommand('copy');
+      document.body.removeChild(temp);
+      alert(msg);
     }
 
     // COPY ACTIONS
