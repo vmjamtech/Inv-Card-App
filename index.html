@@ -1,0 +1,1961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>LOVE.EXE - Proposal & Invitation Studio</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <!-- LZ-String for compact link compression -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
+  <!-- Google Fonts: Press Start 2P & Quicksand -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Quicksand', sans-serif;
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
+      background-color: #ffd6e0;
+      background-image: 
+        linear-gradient(45deg, #ffccd5 25%, transparent 25%), 
+        linear-gradient(-45deg, #ffccd5 25%, transparent 25%), 
+        linear-gradient(45deg, transparent 75%, #ffccd5 75%), 
+        linear-gradient(-45deg, transparent 75%, #ffccd5 75%);
+      background-size: 32px 32px;
+      background-position: 0 0, 0 16px, 16px -16px, -16px 0px;
+      transition: background-color 0.3s ease;
+    }
+    .font-pixel {
+      font-family: 'Press Start 2P', monospace;
+    }
+    .pixel-card {
+      border: 4px solid #ff758f;
+      box-shadow: 0 16px 36px rgba(255, 75, 110, 0.18), 0 4px 0px #ff4d6d;
+    }
+    @keyframes wobble-subtle {
+      0%, 100% { transform: translateY(0px) rotate(-1.5deg); }
+      50% { transform: translateY(-4px) rotate(1.5deg); }
+    }
+    .animate-wobble {
+      animation: wobble-subtle 2.5s ease-in-out infinite;
+    }
+    #noBtn {
+      transition: left 0.15s ease-out, top 0.15s ease-out, transform 0.15s ease-out;
+      will-change: left, top, transform;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between items-center p-3 sm:p-5 text-gray-800">
+
+  <!-- BACKGROUND AUDIO ELEMENT FOR URL/FILE PREVIEWS -->
+  <audio id="bgmAudioPlayer" loop preload="auto"></audio>
+
+  <!-- TOP APP HEADER BAR -->
+  <header id="topAppHeader" class="w-full max-w-md mx-auto flex items-center justify-between mb-3 z-30">
+    <div class="flex items-center gap-2 bg-white/85 backdrop-blur-md px-3.5 py-1.5 rounded-full border-2 border-pink-300 shadow-sm">
+      <span class="text-xl animate-bounce">💌</span>
+      <h1 id="headerBadgeTitle" class="font-pixel text-[11px] text-pink-600 tracking-wider font-bold">LOVE.EXE</h1>
+    </div>
+    
+    <div class="flex items-center gap-2">
+      <!-- Token Credit Pill (Clickable to Top Up) -->
+      <button type="button" onclick="openCreditTopupModal()" class="flex items-center gap-1.5 bg-amber-50 hover:bg-amber-100 border-2 border-amber-300 px-3 py-1 rounded-full text-xs font-bold text-amber-800 shadow-sm transition active:scale-95">
+        <span>🪙</span>
+        <span id="creditBalanceBadge" class="font-pixel text-[10px]">5 Credits</span>
+      </button>
+
+      <!-- Navigation Tabs (Hidden in Recipient mode) -->
+      <div id="topNavTabs" class="flex items-center gap-1 bg-white/85 backdrop-blur-md p-1 rounded-full border-2 border-pink-300 shadow-sm">
+        <button type="button" id="tabSenderBtn" onclick="showView('sender')" class="px-3.5 py-1 text-xs font-bold rounded-full bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-sm transition">
+          ✏️ Sender
+        </button>
+        <button type="button" id="tabRecipientBtn" onclick="testRecipientMode()" class="px-3.5 py-1 text-xs font-bold rounded-full text-pink-600 hover:text-pink-800 transition">
+          💌 Recipient
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN WRAPPER -->
+  <main class="w-full max-w-md mx-auto flex-grow flex items-center justify-center relative">
+
+    <!-- ============================================== -->
+    <!-- VIEW 1: SENDER DASHBOARD                      -->
+    <!-- ============================================== -->
+    <div id="viewSender" class="w-full bg-white/95 backdrop-blur-md rounded-3xl p-5 sm:p-6 pixel-card space-y-4">
+      
+      <!-- 1. CHOOSE THEME (5 Dynamic Themes) -->
+      <div>
+        <div class="flex items-center justify-between mb-1.5">
+          <label class="text-xs font-bold uppercase font-pixel text-pink-600 flex items-center gap-1.5">
+            <span>🎨</span> Choose Theme
+          </label>
+          <span class="text-[10px] text-pink-500 font-pixel">Instant Presets</span>
+        </div>
+        <div class="grid grid-cols-5 gap-1 text-[11px] font-bold text-center">
+          <button type="button" onclick="selectTheme('love')" id="tBtn-love" class="theme-btn p-2 rounded-2xl border-2 border-pink-500 bg-pink-100 text-pink-700 flex flex-col items-center">
+            <span class="text-lg">💖</span>
+            <span class="text-[9px] mt-0.5">Love</span>
+          </button>
+          <button type="button" onclick="selectTheme('wedding')" id="tBtn-wedding" class="theme-btn p-2 rounded-2xl border-2 border-gray-200 bg-white text-gray-700 hover:border-amber-400 flex flex-col items-center">
+            <span class="text-lg">💍</span>
+            <span class="text-[9px] mt-0.5">Wedding</span>
+          </button>
+          <button type="button" onclick="selectTheme('birthday')" id="tBtn-birthday" class="theme-btn p-2 rounded-2xl border-2 border-gray-200 bg-white text-gray-700 hover:border-purple-400 flex flex-col items-center">
+            <span class="text-lg">🎂</span>
+            <span class="text-[9px] mt-0.5">Birthday</span>
+          </button>
+          <button type="button" onclick="selectTheme('office')" id="tBtn-office" class="theme-btn p-2 rounded-2xl border-2 border-gray-200 bg-white text-gray-700 hover:border-blue-400 flex flex-col items-center">
+            <span class="text-lg">💼</span>
+            <span class="text-[9px] mt-0.5">Meeting</span>
+          </button>
+          <button type="button" onclick="selectTheme('booking')" id="tBtn-booking" class="theme-btn p-2 rounded-2xl border-2 border-gray-200 bg-white text-gray-700 hover:border-emerald-400 flex flex-col items-center">
+            <span class="text-lg">📅</span>
+            <span class="text-[9px] mt-0.5">Booking</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 2. RECIPIENT & QUESTION INPUTS -->
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs font-bold text-gray-700 mb-1">To (Recipient Name / Nickname):</label>
+          <input type="text" id="cfgRecipient" value="Cutie" class="w-full px-3 py-2 text-sm rounded-xl border-2 border-pink-200 focus:border-pink-400 focus:outline-none">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-gray-700 mb-1">Question / RSVP Invite (Step 1):</label>
+          <input type="text" id="cfgQuestion" value="Will you go out with me? 💖" class="w-full px-3 py-2 text-sm rounded-xl border-2 border-pink-200 focus:border-pink-400 focus:outline-none">
+        </div>
+      </div>
+
+      <!-- 3. DYNAMIC NO ESCAPE STAGES (Default 2 - 4 - 2) -->
+      <section class="bg-pink-50/80 border-2 border-pink-200 rounded-2xl p-3.5 space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-pink-700 uppercase font-pixel tracking-wide">"NO" Escape Stages</span>
+          <span class="text-[9px] text-pink-600 bg-pink-100 px-2 py-0.5 rounded-full font-bold">Vanishes after final loop</span>
+        </div>
+
+        <!-- Container populated with editable loops -->
+        <div id="dynamicLoopsContainer" class="space-y-2.5"></div>
+
+        <!-- Add Loop Stage Button -->
+        <button type="button" onclick="addLoopStage()" class="w-full py-1.5 bg-pink-100 hover:bg-pink-200 border border-dashed border-pink-400 text-pink-700 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition active:scale-95">
+          <span>➕</span> Add Another Loop Stage
+        </button>
+
+        <!-- Final Button text after vanishing -->
+        <div class="pt-1 border-t border-pink-200">
+          <label class="block text-[10px] font-bold text-gray-700">Button Text when NO vanishes:</label>
+          <input type="text" id="cfgPostVanishYesText" value="YES! I'M ALL YOURS! 🥰💖" class="w-full px-2.5 py-1.5 rounded-lg border text-xs font-bold text-pink-700 bg-white">
+        </div>
+      </section>
+
+      <!-- 4. CELEBRATION MESSAGE -->
+      <div>
+        <label class="block text-xs font-bold text-gray-700 mb-1">Celebration Message (Step 2 - After YES):</label>
+        <textarea id="cfgCelebrationMsg" rows="2" class="w-full px-3 py-2 text-sm rounded-xl border-2 border-pink-200 focus:border-pink-400 focus:outline-none">I know you will answer yes since you like me very very much! 🥰✨</textarea>
+      </div>
+
+      <!-- 5. VIP CUSTOM STYLING & BGM MUSIC SECTION (15 Thematic BGMs) -->
+      <section class="p-3 border-2 border-purple-200 rounded-2xl bg-purple-50/50 space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-purple-800 uppercase font-pixel tracking-wide flex items-center gap-1.5">
+            <span>✨</span> VIP Style & Music
+          </span>
+          <span class="text-[9px] text-purple-600 bg-purple-100 px-2 py-0.5 rounded-full font-bold">Autoplays on Open</span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2 text-xs">
+          <div>
+            <label class="block text-[10px] font-bold text-gray-600 mb-1">Custom Background</label>
+            <div class="flex items-center gap-2">
+              <input type="color" id="cfgCustomBg" value="#ffd6e0" oninput="applyCustomLiveColor()" class="w-8 h-8 rounded border border-gray-200 cursor-pointer">
+              <span id="cfgCustomBgHex" class="text-[10px] font-mono text-gray-500">#ffd6e0</span>
+            </div>
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-gray-600 mb-1">Checkered Pattern</label>
+            <div class="flex items-center gap-2">
+              <input type="color" id="cfgCustomPattern" value="#ffccd5" oninput="applyCustomLiveColor()" class="w-8 h-8 rounded border border-gray-200 cursor-pointer">
+              <span id="cfgCustomPatternHex" class="text-[10px] font-mono text-gray-500">#ffccd5</span>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-[10px] font-bold text-gray-700 mb-1">🎵 Background Music (BGM):</label>
+          <div class="flex gap-2 items-center">
+            <select id="cfgAudioPreset" onchange="handleAudioSelection(this.value)" class="w-full text-xs p-2 rounded-xl border border-purple-200 bg-white font-bold text-purple-900 focus:outline-none">
+              <option value="none">No Music (Mute)</option>
+              
+              <!-- LOVE THEME TRACKS -->
+              <optgroup label="💖 LOVE THEME">
+                <option value="love_piano" selected>🎹 Romantic Piano Ballad</option>
+                <option value="love_lofi">☕ Warm Cozy Bedroom Lo-Fi</option>
+                <option value="love_acoustic">🎸 Sweet Acoustic Heartstrings</option>
+              </optgroup>
+
+              <!-- WEDDING THEME TRACKS -->
+              <optgroup label="💍 WEDDING THEME">
+                <option value="wedding_canon">🎻 Canon in D Classical Strings</option>
+                <option value="wedding_bells">⛪ Cathedral Chimes & Vows</option>
+                <option value="wedding_waltz">🥂 Royal Champagne Waltz</option>
+              </optgroup>
+
+              <!-- BIRTHDAY THEME TRACKS -->
+              <optgroup label="🎂 BIRTHDAY THEME">
+                <option value="bday_chiptune">🎺 8-Bit Birthday Chiptune</option>
+                <option value="bday_confetti">🎈 Upbeat Confetti Pop</option>
+                <option value="bday_bossa">🍰 Sweet Bossa Nova Tea Party</option>
+              </optgroup>
+
+              <!-- MEETING / OFFICE TRACKS -->
+              <optgroup label="💼 MEETING / OFFICE">
+                <option value="office_jazz">☕ Smooth Coffeehouse Jazz</option>
+                <option value="office_focus">💻 Silicon Valley Lo-Fi Beats</option>
+                <option value="office_elevator">🏢 Upbeat Executive Elevator Groove</option>
+              </optgroup>
+
+              <!-- BOOKING / SALON TRACKS -->
+              <optgroup label="🌿 BOOKING / SALON">
+                <option value="booking_spa">🌿 Zen Garden Spa Ambient</option>
+                <option value="booking_harp">🌸 Blossom Harp & Waterfall</option>
+                <option value="booking_chill">✨ Aesthetic Salon Chill Lounge</option>
+              </optgroup>
+
+              <!-- CUSTOM & DEVICE OPTIONS -->
+              <optgroup label="📁 CUSTOM AUDIO">
+                <option value="device">📁 Play from Device (Local MP3 / Audio)...</option>
+                <option value="custom">🔗 Custom MP3 Web URL...</option>
+              </optgroup>
+            </select>
+            <button type="button" id="previewAudioBtn" onclick="toggleAudioPreview()" class="px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs rounded-xl shrink-0 active:scale-95 transition">
+              ▶ Test
+            </button>
+          </div>
+          
+          <!-- Browse from Device Box -->
+          <div id="deviceAudioUploadBox" class="hidden mt-2 p-3 bg-white rounded-xl border border-dashed border-purple-300 space-y-2 text-center">
+            <label class="block text-[10px] font-bold text-purple-700">Choose Audio / MP3 from your phone or PC:</label>
+            <input type="file" id="audioDeviceFileInput" accept="audio/*" onchange="handleDeviceAudioUpload(event)" class="text-xs w-full block file:mr-2 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-purple-100 file:text-purple-700 hover:file:bg-purple-200 cursor-pointer">
+            
+            <!-- Embedded HTML5 Preview Player -->
+            <div id="deviceAudioPlayerWrapper" class="hidden pt-1">
+              <audio id="deviceAudioPreviewControl" controls class="w-full h-8 mx-auto"></audio>
+            </div>
+            
+            <p id="deviceAudioStatus" class="text-[10px] text-amber-600 font-semibold">ℹ️ Recipient links use built-in melodies to keep links ultra-short & prevent Facebook lag.</p>
+          </div>
+
+          <input type="url" id="cfgCustomAudioUrl" placeholder="https://example.com/song.mp3" class="hidden mt-1.5 w-full text-xs p-2 rounded-xl border border-purple-300 font-mono">
+        </div>
+      </section>
+
+      <!-- 6. MASCOT (PIG 1st, DOG 2nd) OR CUSTOM PHOTO -->
+      <section class="space-y-2">
+        <div class="flex items-center justify-between">
+          <label class="text-xs font-bold text-gray-700 uppercase">Choose Mascot or Photo</label>
+          <div class="flex items-center gap-3 text-xs">
+            <label class="flex items-center gap-1 cursor-pointer">
+              <input type="radio" name="avatarType" value="mascot" checked onchange="toggleAvatarChoice('mascot')" class="text-pink-500">
+              <span class="font-bold">Mascot</span>
+            </label>
+            <label class="flex items-center gap-1 cursor-pointer">
+              <input type="radio" name="avatarType" value="photo" onchange="toggleAvatarChoice('photo')" class="text-pink-500">
+              <span class="font-bold">Upload Photo</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 12 Calendar Animals with PIG 1st & DOG 2nd -->
+        <div id="mascotPickerBox" class="grid grid-cols-4 gap-1.5 max-h-36 overflow-y-auto p-1.5 border rounded-xl bg-gray-50"></div>
+
+        <!-- Upload Photo Area -->
+        <div id="photoUploadBox" class="hidden p-3 border-2 border-dashed border-pink-300 rounded-xl bg-pink-50/50 text-center">
+          <input type="file" id="photoFileInput" accept="image/*" class="text-xs" onchange="handlePhotoUpload(event)">
+          <p class="text-[11px] text-gray-500 mt-1">Upload picture or avatar</p>
+          <div id="photoPreviewBox" class="hidden mt-2">
+            <img id="photoPreviewImg" class="w-16 h-16 object-cover mx-auto rounded-full border-2 border-pink-400 shadow" alt="Photo Preview">
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. OPTIONAL GCASH / ACCOUNT SURPRISE -->
+      <section class="p-3 border rounded-xl bg-gray-50 space-y-2">
+        <div class="flex items-center justify-between">
+          <div>
+            <span class="text-xs font-bold text-gray-700 block">Account / GCash Surprise</span>
+            <span class="text-[10px] text-gray-500">Show copyable Account Number & QR on celebration</span>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" id="toggleAccountBox" class="sr-only peer" onchange="toggleAccountSection()">
+            <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-pink-500"></div>
+          </label>
+        </div>
+
+        <div id="accountConfigFields" class="hidden space-y-2 pt-2 border-t">
+          <div>
+            <label class="block text-[10px] font-bold text-gray-600">Surprise Message:</label>
+            <input type="text" id="cfgAccountMsg" value="Oo nga pala may Gcash ka balik ko din sa katapusan" class="w-full px-2 py-1 text-xs rounded border">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-gray-600">ACCOUNT NUMBER:</label>
+            <input type="text" id="cfgAccountNum" value="09195471229" class="w-full px-2 py-1 text-xs rounded border font-mono">
+          </div>
+
+          <!-- GCash QR Code Image Uploader -->
+          <div class="p-2.5 bg-blue-50/70 border border-blue-200 rounded-xl space-y-1.5 text-center">
+            <label class="block text-[10px] font-bold text-blue-800">Upload GCash QR Code (Optional):</label>
+            <input type="file" id="qrFileInput" accept="image/*" class="text-xs w-full block file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[10px] file:font-bold file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-200 cursor-pointer" onchange="handleQrUpload(event)">
+            <p class="text-[9px] text-blue-500">Auto-compressed for fast loading</p>
+            <div id="qrPreviewBox" class="hidden pt-1">
+              <img id="qrPreviewImg" class="w-24 h-24 object-contain mx-auto rounded-lg border-2 border-blue-300 bg-white p-1 shadow-sm" alt="GCash QR Preview">
+              <button type="button" onclick="removeUploadedQr()" class="mt-1 text-[9px] text-rose-500 font-bold hover:underline">Remove QR</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VERCEL URL CONFIG -->
+      <div class="p-2.5 bg-pink-50/60 border border-pink-200 rounded-xl space-y-1">
+        <label class="block text-[10px] font-bold text-pink-800 uppercase">
+          🌐 Live Vercel App URL:
+        </label>
+        <input type="text" id="cfgVercelUrl" value="https://invappcard.vercel.app" class="w-full px-2.5 py-1 text-xs rounded-lg border font-mono text-gray-700 bg-white">
+        <p class="text-[10px] text-gray-500">Links will automatically build using this live URL.</p>
+      </div>
+
+      <!-- GENERATE INVITATION BUTTON (Strictly single line) -->
+      <button type="button" onclick="generateInvitation()" class="w-full py-3.5 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-bold rounded-2xl shadow-lg shadow-pink-200 transition transform active:scale-95 flex items-center justify-center text-[11px] sm:text-xs font-pixel whitespace-nowrap overflow-hidden">
+        ✨ GENERATE INVITATION CARD (1 🪙)
+      </button>
+
+      <!-- 8. SHARE SECTION (Clean: No QR code card, only short link & share buttons) -->
+      <div id="shareSection" class="hidden pt-4 border-t-2 border-dashed border-pink-200 space-y-3">
+        <!-- Editable Message -->
+        <div>
+          <label class="block text-xs font-bold text-pink-800 mb-1">
+            ✏️ Editable Invitation Message:
+          </label>
+          <input type="text" id="shareCustomMsgInput" value="Love Card for Cutie! Open your surprise here:" class="w-full px-3 py-2 text-xs rounded-xl border-2 border-pink-200 focus:border-pink-400 focus:outline-none">
+        </div>
+
+        <!-- Short Link Box -->
+        <div>
+          <label class="block text-xs font-bold text-gray-700 mb-1 flex items-center justify-between">
+            <span>🔒 Generated Link (Protected / Read-Only):</span>
+            <span id="linkDensityBadge" class="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">Compact</span>
+          </label>
+          <div class="flex items-center gap-1.5">
+            <input type="text" id="shareUrlOnlyInput" readonly class="w-full bg-gray-100 text-gray-600 px-3 py-2 rounded-xl border border-gray-300 text-xs font-mono select-all">
+            <button type="button" onclick="copyLinkOnly()" class="px-3.5 py-2 bg-pink-500 text-white font-bold rounded-xl hover:bg-pink-600 text-xs shrink-0 active:scale-95">
+              Copy Link
+            </button>
+          </div>
+        </div>
+
+        <!-- Share Actions -->
+        <div class="space-y-1.5 pt-1">
+          <button type="button" onclick="copyCombinedMessageAndLink()" class="w-full py-2.5 bg-pink-100 hover:bg-pink-200 text-pink-700 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 border border-pink-300 transition active:scale-95">
+            📋 Copy Message & Link Together
+          </button>
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <button type="button" onclick="shareWhatsApp()" class="py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl flex items-center justify-center gap-1.5 transition active:scale-95">
+              💬 WhatsApp
+            </button>
+            <button type="button" onclick="testRecipientMode()" class="py-2.5 bg-purple-500 hover:bg-purple-600 text-white font-bold rounded-xl flex items-center justify-center gap-1.5 transition active:scale-95">
+              👁️ Test Card
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ============================================== -->
+    <!-- VIEW 2: INTERACTIVE RECIPIENT CARD            -->
+    <!-- ============================================== -->
+    <div id="viewRecipient" class="w-full hidden relative">
+      
+      <!-- FLOATING MUSIC TOGGLE BUTTON -->
+      <button type="button" id="floatingMusicToggle" onclick="toggleMusicPlayback()" class="hidden absolute top-2 right-2 z-40 bg-white/90 hover:bg-white text-pink-600 border-2 border-pink-300 p-2 rounded-full shadow-md text-xs font-bold transition active:scale-90 flex items-center gap-1">
+        <span id="musicToggleIcon">🎵</span>
+      </button>
+
+      <!-- STAGE 1: CLOSED ENVELOPE -->
+      <div id="envelopeStage" onclick="openEnvelope()" class="w-full bg-white/95 rounded-3xl p-8 text-center pixel-card cursor-pointer transform hover:scale-[1.02] transition">
+        <div class="text-7xl mb-4 animate-bounce" id="dispEnvelopeIcon">💌</div>
+        <div class="inline-block px-3 py-1 bg-pink-100 text-pink-700 text-xs font-pixel rounded-full mb-2">Special Delivery</div>
+        <h2 class="text-xl font-bold text-gray-800" id="dispEnvRecipient">For Cutie</h2>
+        <p class="text-xs text-gray-500 mt-2">Tap the envelope to open your secret surprise ✨</p>
+        <button type="button" class="mt-4 px-6 py-2.5 bg-pink-500 text-white text-xs font-bold rounded-full shadow-md animate-pulse">
+          Open Invitation ✨
+        </button>
+      </div>
+
+      <!-- STAGE 2: QUESTION & DODGING WINDOW -->
+      <div id="proposalWindowStage" class="hidden w-full bg-pink-100 border-4 border-pink-300 rounded-3xl p-4 sm:p-5 shadow-2xl relative overflow-hidden">
+        
+        <!-- Header -->
+        <div class="flex items-center justify-between border-b-2 border-pink-300 pb-2 mb-3 text-xs font-pixel text-pink-700">
+          <span class="flex items-center gap-1">
+            <span id="dispWinThemeLabel">INVITE:</span>
+            <span id="dispWinToBadge">Cutie</span>
+          </span>
+          <span class="tracking-widest" id="dispWinIcons">♥ ♥ ♥</span>
+        </div>
+
+        <div class="text-center space-y-3">
+          <div class="inline-block px-3 py-0.5 bg-white/80 rounded-full text-xs font-bold text-pink-600 shadow-sm" id="dispCardRecipient">
+            To: Cutie 💕
+          </div>
+
+          <h3 id="dispQuestionText" class="text-lg sm:text-xl font-bold text-gray-800 leading-snug">
+            Will you go out with me? 💖
+          </h3>
+
+          <!-- Avatar Display -->
+          <div class="relative w-28 h-28 mx-auto my-1 flex items-center justify-center bg-white/80 rounded-2xl border-2 border-pink-200 shadow-inner overflow-hidden">
+            <div id="dispAvatarBox" class="w-full h-full flex flex-col items-center justify-center p-2 animate-wobble"></div>
+          </div>
+
+          <!-- Dodging Speech Bubble -->
+          <div id="dodgeSpeechBubble" class="min-h-[26px] flex items-center justify-center text-xs font-pixel text-pink-600 transition-all opacity-0">
+            Are you sure? 🥺
+          </div>
+
+          <!-- Interactive Play Zone with YES and Dodging NO -->
+          <div id="playAreaZone" class="relative w-full h-24 bg-white/50 rounded-2xl border-2 border-dashed border-pink-300 p-2 flex items-center justify-center overflow-hidden">
+            <!-- YES BUTTON -->
+            <button type="button" id="yesBtn" onclick="acceptYes()" class="px-6 py-2.5 bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold rounded-xl shadow-md text-sm font-pixel transition-all active:scale-95 z-10 flex items-center justify-center gap-1">
+              YES! 🥰
+            </button>
+
+            <!-- DODGING NO BUTTON -->
+            <button type="button" id="noBtn" class="absolute px-4 py-2 bg-white text-gray-700 border-2 border-gray-300 font-bold rounded-xl shadow-md text-xs font-pixel z-20 cursor-pointer">
+              NO 🥺
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STAGE 3: CELEBRATION MODAL -->
+      <div id="celebrationStage" class="hidden w-full bg-white/95 backdrop-blur-md rounded-3xl p-5 sm:p-6 shadow-2xl border-4 border-pink-300 text-center space-y-4">
+        <div class="text-5xl animate-bounce" id="dispCelebrationEmoji">🎉💖✨</div>
+        <h3 class="text-xl font-bold text-gray-800 font-pixel text-pink-600" id="dispCelebrationTitle">YAAAAY! 🎉</h3>
+        <p id="dispCelebrationText" class="text-sm font-bold text-gray-700 bg-pink-50 p-3 rounded-2xl border border-pink-200 leading-relaxed">
+          I know you will answer yes since you like me very very much! 🥰✨
+        </p>
+
+        <!-- Optional Account Surprise Box -->
+        <div id="dispAccountBox" class="hidden p-4 bg-blue-50/90 border-2 border-blue-200 rounded-2xl space-y-3 text-center">
+          <p id="dispAccountMsgText" class="text-xs font-bold text-blue-900 leading-snug px-2">
+            Oo nga pala may Gcash ka balik ko din sa katapusan
+          </p>
+
+          <!-- Recipient GCash QR Display -->
+          <div id="dispQrContainer" class="hidden bg-white p-2.5 rounded-xl border border-blue-200 shadow-sm inline-block mx-auto">
+            <img id="dispQrImage" class="w-32 h-32 object-contain mx-auto rounded-lg" alt="GCash QR">
+            <span class="block text-[9px] font-bold text-blue-600 mt-1 uppercase">Scan to send via GCash</span>
+          </div>
+
+          <div class="bg-white p-2.5 rounded-xl border border-blue-100 flex items-center justify-between text-left shadow-sm">
+            <div>
+              <span class="block text-[10px] font-bold text-blue-500 uppercase">ACCOUNT NUMBER:</span>
+              <span id="dispAccountNumText" class="text-xs font-mono font-bold text-gray-800">09195471229</span>
+            </div>
+            <button type="button" onclick="copyRecipientAccount()" class="px-2.5 py-1 bg-blue-500 hover:bg-blue-600 text-white text-[11px] font-bold rounded-lg transition active:scale-95">
+              Copy
+            </button>
+          </div>
+        </div>
+
+        <!-- Replay & Back Buttons -->
+        <div class="pt-2 flex flex-col gap-2">
+          <button type="button" onclick="replayCardPresentation()" class="w-full py-2.5 bg-pink-500 hover:bg-pink-600 text-white font-bold rounded-xl text-xs transition active:scale-95 flex items-center justify-center gap-1.5 shadow">
+            🔁 Replay Card
+          </button>
+          <button type="button" id="recipientBackToStudioBtn" onclick="showView('sender')" class="w-full py-2 bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold rounded-xl text-xs transition">
+            ✏️ Back to Studio
+          </button>
+        </div>
+      </div>
+
+      <!-- STAGE 4: STRICT ONE-TIME USE LOCKOUT SCREEN -->
+      <div id="lockedClaimedStage" class="hidden w-full bg-white/95 backdrop-blur-md rounded-3xl p-6 shadow-2xl border-4 border-gray-300 text-center space-y-3">
+        <div class="text-6xl animate-pulse">🔒💌</div>
+        <h3 class="text-base font-bold text-gray-800 font-pixel">Invitation Already Answered</h3>
+        <p class="text-xs text-gray-500 leading-relaxed">
+          This one-time invitation has already been accepted and locked. It cannot be reused or submitted again!
+        </p>
+      </div>
+
+    </div>
+
+    <!-- MODAL: CREDIT TOP-UP & VOUCHER REDEEM -->
+    <div id="creditTopupModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div class="bg-white rounded-3xl p-6 max-w-sm w-full pixel-card space-y-4 shadow-2xl relative text-center">
+        <button type="button" onclick="closeCreditTopupModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-lg font-bold">✕</button>
+
+        <div class="text-4xl">🪙💌</div>
+        <h3 class="font-pixel text-sm text-pink-600 font-bold">Top-Up Invitation Credits</h3>
+        <p class="text-xs text-gray-500">Need more cards? Redeem an instant voucher or log your GCash reference to get tokens immediately!</p>
+
+        <!-- Current Balance Display -->
+        <div class="p-3 bg-pink-50 rounded-2xl border border-pink-200 flex justify-between items-center text-xs">
+          <span class="font-bold text-gray-600">Current Balance:</span>
+          <span id="modalCreditCount" class="font-pixel text-pink-600 font-bold text-sm">5 Credits</span>
+        </div>
+
+        <!-- Voucher Input -->
+        <div class="text-left space-y-1.5">
+          <label class="block text-[11px] font-bold text-gray-700">Enter Voucher Code or GCash Ref #:</label>
+          <div class="flex gap-1.5">
+            <input type="text" id="voucherCodeInput" placeholder="e.g. FREE5 or 13-digit Ref" class="w-full px-3 py-2 text-xs rounded-xl border-2 border-pink-200 font-mono uppercase focus:outline-none focus:border-pink-500">
+            <button type="button" onclick="redeemVoucherCode()" class="px-3.5 py-2 bg-pink-500 hover:bg-pink-600 text-white font-bold rounded-xl text-xs active:scale-95 transition">
+              Redeem
+            </button>
+          </div>
+          <p id="voucherAlertMsg" class="text-[10px] text-gray-400">Sample quick test codes: <strong class="text-pink-600">FREE5</strong>, <strong class="text-pink-600">LOVE10</strong></p>
+        </div>
+
+        <!-- GCash Manual Transfer Info -->
+        <div class="p-3 bg-blue-50/80 rounded-2xl border border-blue-200 text-left text-[11px] space-y-1 text-blue-900">
+          <p class="font-bold flex items-center gap-1"><span>💳</span> Direct GCash Top-up:</p>
+          <p>Send ₱29 for 5 credits / ₱49 for 10 credits to:</p>
+          <p class="font-mono font-bold text-blue-700">09195471229 (V*** M.)</p>
+          <p class="text-[9px] text-blue-500">Paste your GCash reference number above for instant activation.</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ============================================== -->
+  <!-- ISOLATED, ERROR-FREE JAVASCRIPT APPLICATION    -->
+  <!-- ============================================== -->
+  <script>
+    // 1. STATE & THEMES DEFINITIONS
+    let userCredits = parseInt(localStorage.getItem('user_tokens') || '5', 10);
+    let isLockedRecipientMode = false;
+    let dodgeTapCount = 0;
+    let isNoVanished = false;
+    let currentShareUrl = '';
+
+    // 12 Calendar Animals with PIG first and DOG second
+    const CALENDAR_ANIMALS = [
+      { id: 'pig', name: 'PIG', emoji: '🐖' },
+      { id: 'dog', name: 'DOG', emoji: '🐕' },
+      { id: 'rat', name: 'RAT', emoji: '🐀' },
+      { id: 'ox', name: 'OX', emoji: '🐂' },
+      { id: 'tiger', name: 'TIGER', emoji: '🐅' },
+      { id: 'rabbit', name: 'RABBIT', emoji: '🐇' },
+      { id: 'dragon', name: 'DRAGON', emoji: '🐉' },
+      { id: 'snake', name: 'SNAKE', emoji: '🐍' },
+      { id: 'horse', name: 'HORSE', emoji: '🐎' },
+      { id: 'goat', name: 'GOAT', emoji: '🐐' },
+      { id: 'monkey', name: 'MONKEY', emoji: '🐒' },
+      { id: 'rooster', name: 'ROOSTER', emoji: '🐓' }
+    ];
+
+    const THEMES = {
+      love: {
+        id: 'love',
+        title: 'LOVE.EXE',
+        icon: '💌',
+        bodyBg: '#ffd6e0',
+        patternBg: '#ffccd5',
+        icons: '♥ ♥ ♥',
+        sharePrefix: '💖 Love Card for',
+        celebrationTitle: 'YAYYY! IT\'S A MATCH! 🎉',
+        celebrationEmoji: '🎉💖✨',
+        defaultBgm: 'love_piano',
+        q: 'Will you go out with me? 💖',
+        recipient: 'Cutie',
+        loops: [
+          { count: 2, msg: 'Are you sure? 🥺' },
+          { count: 4, msg: 'Wait no! 😱' },
+          { count: 2, msg: 'You can\'t escape! 💕' }
+        ],
+        vanish: 'YES! I\'M ALL YOURS! 🥰💖',
+        c: 'I know you will answer yes since you like me very very much! 🥰✨'
+      },
+      wedding: {
+        id: 'wedding',
+        title: 'WEDDING.RSVP',
+        icon: '💍',
+        bodyBg: '#fdf6e2',
+        patternBg: '#faedcd',
+        icons: '✨ 💍 ✨',
+        sharePrefix: '💍 Wedding Invitation for',
+        celebrationTitle: 'HONORED TO HAVE YOU! 🥂',
+        celebrationEmoji: '🥂💒✨',
+        defaultBgm: 'wedding_canon',
+        q: 'Will you grace us with your presence at our wedding?',
+        recipient: 'Honored Guest',
+        loops: [
+          { count: 2, msg: 'The catering is already paid for! 🍗🍷' },
+          { count: 4, msg: 'Don’t make the bride cry on her big day! 😭👰' },
+          { count: 2, msg: 'Free open bar! You physically cannot say no! 🍾🥂' }
+        ],
+        vanish: 'YES! I\'LL BE THERE! 💍✨',
+        c: 'We are thrilled! Can\'t wait to celebrate our special day together! 🥂👰🤵'
+      },
+      birthday: {
+        id: 'birthday',
+        title: 'PARTY.EXE',
+        icon: '🎂',
+        bodyBg: '#f3e8ff',
+        patternBg: '#e9d5ff',
+        icons: '🎈 🎂 🎈',
+        sharePrefix: '🎂 Birthday Party Invite for',
+        celebrationTitle: 'LET\'S PARTY! 🥳',
+        celebrationEmoji: '🎂🎉🎈',
+        defaultBgm: 'bday_chiptune',
+        q: 'Are you coming to celebrate my birthday party? 🥳',
+        recipient: 'Bestie',
+        loops: [
+          { count: 2, msg: 'No cake for you then? It is chocolate! 🍫' },
+          { count: 4, msg: 'Who is going to sing terribly off-key with me?! 🎤😭' },
+          { count: 2, msg: 'You are coming even if I have to carry you! 🏃‍♀️💨' }
+        ],
+        vanish: 'YES! BRING ON THE CAKE! 🎂🎉',
+        c: 'Yessss! Get ready for awesome food, terrible singing, and wild fun! 🥳🍕🍰'
+      },
+      office: {
+        id: 'office',
+        title: 'SYNC.EXE',
+        icon: '💼',
+        bodyBg: '#e0f2fe',
+        patternBg: '#bae6fd',
+        icons: '☕ 💼 📊',
+        sharePrefix: '💼 Coffee / Quick Sync for',
+        celebrationTitle: 'CALENDAR INVITE SENT! 📅',
+        celebrationEmoji: '☕💻📈',
+        defaultBgm: 'office_jazz',
+        q: 'Quick sync over coffee this week to discuss our big ideas? ☕',
+        recipient: 'Colleague',
+        loops: [
+          { count: 2, msg: 'It could literally be an email, but with coffee! ☕' },
+          { count: 4, msg: 'I promise no boring PowerPoint presentations! 📊🙅‍♂️' },
+          { count: 2, msg: 'Fine, my treat for the iced lattes! ☕💸' }
+        ],
+        vanish: 'ACCEPTED! LET\'S CONNECT! ☕🚀',
+        c: 'Awesome! Blocking 20 mins on the calendar. Coffee is on! ☕📈'
+      },
+      booking: {
+        id: 'booking',
+        title: 'BOOKING.EXE',
+        icon: '📅',
+        bodyBg: '#dcfce7',
+        patternBg: '#bbf7d0',
+        icons: '🌿 ✨ 📅',
+        sharePrefix: '📅 Slot Confirmation for',
+        celebrationTitle: 'SLOT RESERVED! ✅',
+        celebrationEmoji: '💅✨🌿',
+        defaultBgm: 'booking_spa',
+        q: 'Lock in your VIP appointment slot with us today? ✨',
+        recipient: 'Valued Client',
+        loops: [
+          { count: 2, msg: 'Slots are filling up very fast for this weekend! ⏳' },
+          { count: 4, msg: 'We reserved our top specialist just for you! 💆‍♀️' },
+          { count: 2, msg: 'Exclusive 10% discount applied to this slot! 🏷️💖' }
+        ],
+        vanish: 'CONFIRM MY RESERVATION! 📅✨',
+        c: 'Appointment locked in! Looking forward to giving you the royal treatment! 🌿💆'
+      }
+    };
+
+    let cardConfig = {
+      cardId: 'c_' + Math.random().toString(36).substring(2, 8),
+      theme: 'love',
+      recipient: 'Cutie',
+      question: 'Will you go out with me? 💖',
+      celebrationMsg: 'I know you will answer yes since you like me very very much! 🥰✨',
+      postVanishYesText: "YES! I'M ALL YOURS! 🥰💖",
+      loops: [
+        { count: 2, msg: 'Are you sure? 🥺' },
+        { count: 4, msg: 'Wait no! 😱' },
+        { count: 2, msg: 'You can\'t escape! 💕' }
+      ],
+      mascot: 'pig',
+      avatarType: 'mascot',
+      customPhoto: '',
+      hasAccount: false,
+      accountMsg: 'Oo nga pala may Gcash ka balik ko din sa katapusan',
+      accountNum: '09195471229',
+      customQrImage: '',
+      customBg: '#ffd6e0',
+      customPattern: '#ffccd5',
+      audioKey: 'love_piano',
+      customAudioUrl: ''
+    };
+
+    // 2. WEB AUDIO API SYNTHESIZER (15 THEMATIC COMPOSITIONS)
+    let audioCtx = null;
+    let synthInterval = null;
+    let isSynthPlaying = false;
+    let isAudioMuted = false;
+
+    function getAudioContext() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass) {
+          audioCtx = new AudioContextClass();
+        }
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    const NOTES = {
+      C3: 130.81, D3: 146.83, E3: 164.81, F3: 174.61, G3: 196.00, A3: 220.00, B3: 246.94,
+      C4: 261.63, D4: 293.66, E4: 329.63, F4: 349.23, G4: 392.00, A4: 440.00, B4: 493.88,
+      C5: 523.25, D5: 587.33, E5: 659.25, F5: 698.46, G5: 783.99, A5: 880.00, B5: 987.77,
+      C6: 1046.50
+    };
+
+    function playTone(freq, type = 'sine', duration = 0.8, volume = 0.22, delay = 0) {
+      const ctx = getAudioContext();
+      if (!ctx || isAudioMuted) return;
+
+      setTimeout(() => {
+        try {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, ctx.currentTime);
+
+          gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(volume, ctx.currentTime + 0.04);
+          gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+
+          osc.start();
+          osc.stop(ctx.currentTime + duration);
+        } catch (e) {
+          console.warn('Tone error:', e);
+        }
+      }, delay * 1000);
+    }
+
+    const THEMATIC_MELODIES = {
+      // 💖 LOVE THEME
+      love_piano: {
+        loopDuration: 6400,
+        notes: [
+          { f: NOTES.C4, d: 1.2, v: 0.18, t: 0, wave: 'sine' },
+          { f: NOTES.E4, d: 1.0, v: 0.16, t: 0.3, wave: 'sine' },
+          { f: NOTES.G4, d: 1.2, v: 0.18, t: 0.6, wave: 'sine' },
+          { f: NOTES.C5, d: 1.6, v: 0.22, t: 0.9, wave: 'sine' },
+          { f: NOTES.G4, d: 0.8, v: 0.14, t: 1.4, wave: 'sine' },
+          { f: NOTES.E5, d: 1.8, v: 0.20, t: 1.7, wave: 'sine' },
+          { f: NOTES.A3, d: 1.4, v: 0.16, t: 2.3, wave: 'triangle' },
+          { f: NOTES.C4, d: 1.1, v: 0.15, t: 2.6, wave: 'sine' },
+          { f: NOTES.E4, d: 1.4, v: 0.18, t: 2.9, wave: 'sine' },
+          { f: NOTES.A4, d: 1.8, v: 0.22, t: 3.2, wave: 'sine' },
+          { f: NOTES.F3, d: 1.5, v: 0.16, t: 3.9, wave: 'triangle' },
+          { f: NOTES.A4, d: 1.2, v: 0.17, t: 4.2, wave: 'sine' },
+          { f: NOTES.C5, d: 1.6, v: 0.20, t: 4.5, wave: 'sine' },
+          { f: NOTES.G3, d: 1.6, v: 0.16, t: 5.1, wave: 'triangle' },
+          { f: NOTES.B4, d: 1.3, v: 0.18, t: 5.4, wave: 'sine' },
+          { f: NOTES.D5, d: 1.8, v: 0.22, t: 5.7, wave: 'sine' }
+        ]
+      },
+      love_lofi: {
+        loopDuration: 5200,
+        notes: [
+          { f: NOTES.C4, d: 1.8, v: 0.16, t: 0, wave: 'triangle' },
+          { f: NOTES.E4, d: 1.8, v: 0.14, t: 0, wave: 'sine' },
+          { f: NOTES.G4, d: 1.8, v: 0.14, t: 0, wave: 'sine' },
+          { f: NOTES.B4, d: 2.0, v: 0.15, t: 0, wave: 'sine' },
+          { f: NOTES.A3, d: 1.8, v: 0.16, t: 1.8, wave: 'triangle' },
+          { f: NOTES.C4, d: 1.8, v: 0.14, t: 1.8, wave: 'sine' },
+          { f: NOTES.E4, d: 1.8, v: 0.14, t: 1.8, wave: 'sine' },
+          { f: NOTES.G4, d: 2.0, v: 0.15, t: 1.8, wave: 'sine' },
+          { f: NOTES.F3, d: 1.8, v: 0.16, t: 3.6, wave: 'triangle' },
+          { f: NOTES.A4, d: 1.8, v: 0.14, t: 3.6, wave: 'sine' },
+          { f: NOTES.C5, d: 2.0, v: 0.15, t: 3.6, wave: 'sine' }
+        ]
+      },
+      love_acoustic: {
+        loopDuration: 4800,
+        notes: [
+          { f: NOTES.E3, d: 1.0, v: 0.16, t: 0, wave: 'triangle' },
+          { f: NOTES.G4, d: 0.7, v: 0.18, t: 0.2, wave: 'sine' },
+          { f: NOTES.B4, d: 0.7, v: 0.18, t: 0.4, wave: 'sine' },
+          { f: NOTES.E5, d: 1.4, v: 0.22, t: 0.6, wave: 'sine' },
+          { f: NOTES.A3, d: 1.0, v: 0.16, t: 1.6, wave: 'triangle' },
+          { f: NOTES.C4, d: 0.7, v: 0.18, t: 1.8, wave: 'sine' },
+          { f: NOTES.E4, d: 0.7, v: 0.18, t: 2.0, wave: 'sine' },
+          { f: NOTES.A4, d: 1.4, v: 0.22, t: 2.2, wave: 'sine' },
+          { f: NOTES.D3, d: 1.0, v: 0.16, t: 3.2, wave: 'triangle' },
+          { f: NOTES.F4, d: 0.7, v: 0.18, t: 3.4, wave: 'sine' },
+          { f: NOTES.A4, d: 0.7, v: 0.18, t: 3.6, wave: 'sine' },
+          { f: NOTES.D5, d: 1.5, v: 0.22, t: 3.8, wave: 'sine' }
+        ]
+      },
+
+      // 💍 WEDDING THEME
+      wedding_canon: {
+        loopDuration: 6400,
+        notes: [
+          { f: NOTES.D4, d: 1.8, v: 0.16, t: 0, wave: 'triangle' },
+          { f: NOTES.F4, d: 1.8, v: 0.15, t: 0, wave: 'sine' },
+          { f: NOTES.A4, d: 1.8, v: 0.16, t: 0, wave: 'sine' },
+          { f: NOTES.A3, d: 1.8, v: 0.16, t: 1.6, wave: 'triangle' },
+          { f: NOTES.E4, d: 1.8, v: 0.15, t: 1.6, wave: 'sine' },
+          { f: NOTES.B3, d: 1.8, v: 0.16, t: 3.2, wave: 'triangle' },
+          { f: NOTES.D4, d: 1.8, v: 0.15, t: 3.2, wave: 'sine' },
+          { f: NOTES.F4, d: 1.8, v: 0.16, t: 4.8, wave: 'triangle' },
+          { f: NOTES.A4, d: 1.8, v: 0.18, t: 4.8, wave: 'sine' }
+        ]
+      },
+      wedding_bells: {
+        loopDuration: 4200,
+        notes: [
+          { f: NOTES.E5, d: 2.2, v: 0.22, t: 0, wave: 'sine' },
+          { f: NOTES.G5, d: 2.2, v: 0.20, t: 0.5, wave: 'sine' },
+          { f: NOTES.B5, d: 2.4, v: 0.18, t: 1.0, wave: 'sine' },
+          { f: NOTES.C6, d: 2.5, v: 0.24, t: 2.0, wave: 'sine' },
+          { f: NOTES.G5, d: 2.0, v: 0.18, t: 2.8, wave: 'sine' },
+          { f: NOTES.E5, d: 2.2, v: 0.20, t: 3.4, wave: 'sine' }
+        ]
+      },
+      wedding_waltz: {
+        loopDuration: 4500,
+        notes: [
+          { f: NOTES.C4, d: 0.6, v: 0.20, t: 0, wave: 'triangle' },
+          { f: NOTES.G4, d: 0.4, v: 0.14, t: 0.5, wave: 'sine' },
+          { f: NOTES.E5, d: 0.4, v: 0.14, t: 1.0, wave: 'sine' },
+          { f: NOTES.A3, d: 0.6, v: 0.20, t: 1.5, wave: 'triangle' },
+          { f: NOTES.E4, d: 0.4, v: 0.14, t: 2.0, wave: 'sine' },
+          { f: NOTES.C5, d: 0.4, v: 0.14, t: 2.5, wave: 'sine' },
+          { f: NOTES.F3, d: 0.6, v: 0.20, t: 3.0, wave: 'triangle' },
+          { f: NOTES.C4, d: 0.4, v: 0.14, t: 3.5, wave: 'sine' },
+          { f: NOTES.A4, d: 0.4, v: 0.14, t: 4.0, wave: 'sine' }
+        ]
+      },
+
+      // 🎂 BIRTHDAY THEME
+      bday_chiptune: {
+        loopDuration: 4000,
+        notes: [
+          { f: NOTES.G4, d: 0.3, v: 0.18, t: 0, wave: 'square' },
+          { f: NOTES.G4, d: 0.3, v: 0.18, t: 0.35, wave: 'square' },
+          { f: NOTES.A4, d: 0.6, v: 0.20, t: 0.7, wave: 'square' },
+          { f: NOTES.G4, d: 0.6, v: 0.20, t: 1.3, wave: 'square' },
+          { f: NOTES.C5, d: 0.6, v: 0.22, t: 1.9, wave: 'square' },
+          { f: NOTES.B4, d: 1.0, v: 0.22, t: 2.5, wave: 'square' },
+          { f: NOTES.G4, d: 0.3, v: 0.18, t: 3.3, wave: 'square' }
+        ]
+      },
+      bday_confetti: {
+        loopDuration: 3600,
+        notes: [
+          { f: NOTES.C5, d: 0.25, v: 0.18, t: 0, wave: 'sine' },
+          { f: NOTES.E5, d: 0.25, v: 0.18, t: 0.3, wave: 'sine' },
+          { f: NOTES.G5, d: 0.3, v: 0.20, t: 0.6, wave: 'sine' },
+          { f: NOTES.C6, d: 0.5, v: 0.22, t: 0.9, wave: 'triangle' },
+          { f: NOTES.A5, d: 0.3, v: 0.18, t: 1.6, wave: 'sine' },
+          { f: NOTES.F5, d: 0.3, v: 0.18, t: 2.0, wave: 'sine' },
+          { f: NOTES.G5, d: 0.6, v: 0.20, t: 2.5, wave: 'sine' }
+        ]
+      },
+      bday_bossa: {
+        loopDuration: 4400,
+        notes: [
+          { f: NOTES.D4, d: 0.5, v: 0.16, t: 0, wave: 'sine' },
+          { f: NOTES.F4, d: 0.4, v: 0.14, t: 0.4, wave: 'sine' },
+          { f: NOTES.A4, d: 0.4, v: 0.14, t: 0.8, wave: 'sine' },
+          { f: NOTES.C5, d: 0.8, v: 0.18, t: 1.2, wave: 'sine' },
+          { f: NOTES.G3, d: 0.5, v: 0.16, t: 2.2, wave: 'triangle' },
+          { f: NOTES.B4, d: 0.4, v: 0.14, t: 2.6, wave: 'sine' },
+          { f: NOTES.D5, d: 0.8, v: 0.18, t: 3.0, wave: 'sine' }
+        ]
+      },
+
+      // 💼 MEETING / OFFICE
+      office_jazz: {
+        loopDuration: 4800,
+        notes: [
+          { f: NOTES.F3, d: 1.2, v: 0.16, t: 0, wave: 'triangle' },
+          { f: NOTES.A4, d: 0.6, v: 0.14, t: 0.3, wave: 'sine' },
+          { f: NOTES.C5, d: 0.6, v: 0.14, t: 0.7, wave: 'sine' },
+          { f: NOTES.E5, d: 1.2, v: 0.18, t: 1.1, wave: 'sine' },
+          { f: NOTES.D3, d: 1.2, v: 0.16, t: 2.4, wave: 'triangle' },
+          { f: NOTES.F4, d: 0.6, v: 0.14, t: 2.7, wave: 'sine' },
+          { f: NOTES.A4, d: 0.6, v: 0.14, t: 3.1, wave: 'sine' },
+          { f: NOTES.C5, d: 1.2, v: 0.18, t: 3.5, wave: 'sine' }
+        ]
+      },
+      office_focus: {
+        loopDuration: 4200,
+        notes: [
+          { f: NOTES.A3, d: 1.6, v: 0.16, t: 0, wave: 'triangle' },
+          { f: NOTES.E4, d: 1.2, v: 0.14, t: 0.4, wave: 'sine' },
+          { f: NOTES.G4, d: 1.2, v: 0.14, t: 0.8, wave: 'sine' },
+          { f: NOTES.B4, d: 1.4, v: 0.16, t: 1.2, wave: 'sine' },
+          { f: NOTES.D3, d: 1.6, v: 0.16, t: 2.2, wave: 'triangle' },
+          { f: NOTES.F4, d: 1.2, v: 0.14, t: 2.6, wave: 'sine' },
+          { f: NOTES.A4, d: 1.4, v: 0.16, t: 3.0, wave: 'sine' }
+        ]
+      },
+      office_elevator: {
+        loopDuration: 3800,
+        notes: [
+          { f: NOTES.C4, d: 0.5, v: 0.16, t: 0, wave: 'sine' },
+          { f: NOTES.E4, d: 0.5, v: 0.14, t: 0.4, wave: 'sine' },
+          { f: NOTES.G4, d: 0.5, v: 0.15, t: 0.8, wave: 'sine' },
+          { f: NOTES.A4, d: 0.8, v: 0.18, t: 1.3, wave: 'sine' },
+          { f: NOTES.G4, d: 0.6, v: 0.14, t: 2.2, wave: 'sine' },
+          { f: NOTES.E4, d: 0.6, v: 0.14, t: 2.8, wave: 'sine' }
+        ]
+      },
+
+      // 🌿 BOOKING / SALON
+      booking_spa: {
+        loopDuration: 5400,
+        notes: [
+          { f: NOTES.D4, d: 2.4, v: 0.14, t: 0, wave: 'sine' },
+          { f: NOTES.A4, d: 2.4, v: 0.15, t: 0.8, wave: 'sine' },
+          { f: NOTES.D5, d: 2.8, v: 0.16, t: 1.6, wave: 'sine' },
+          { f: NOTES.F5, d: 2.6, v: 0.14, t: 2.8, wave: 'sine' },
+          { f: NOTES.A5, d: 2.8, v: 0.16, t: 3.6, wave: 'sine' }
+        ]
+      },
+      booking_harp: {
+        loopDuration: 4600,
+        notes: [
+          { f: NOTES.C4, d: 1.4, v: 0.16, t: 0, wave: 'triangle' },
+          { f: NOTES.G4, d: 1.2, v: 0.15, t: 0.3, wave: 'sine' },
+          { f: NOTES.C5, d: 1.4, v: 0.16, t: 0.6, wave: 'sine' },
+          { f: NOTES.E5, d: 1.8, v: 0.18, t: 1.0, wave: 'sine' },
+          { f: NOTES.G5, d: 2.0, v: 0.16, t: 1.5, wave: 'sine' },
+          { f: NOTES.F4, d: 1.4, v: 0.16, t: 2.5, wave: 'triangle' },
+          { f: NOTES.A4, d: 1.4, v: 0.16, t: 2.9, wave: 'sine' },
+          { f: NOTES.C5, d: 1.8, v: 0.18, t: 3.3, wave: 'sine' }
+        ]
+      },
+      booking_chill: {
+        loopDuration: 4800,
+        notes: [
+          { f: NOTES.E4, d: 1.6, v: 0.15, t: 0, wave: 'sine' },
+          { f: NOTES.B4, d: 1.6, v: 0.15, t: 0.6, wave: 'sine' },
+          { f: NOTES.D5, d: 1.8, v: 0.16, t: 1.2, wave: 'sine' },
+          { f: NOTES.A4, d: 1.6, v: 0.15, t: 2.4, wave: 'sine' },
+          { f: NOTES.C5, d: 1.6, v: 0.15, t: 3.0, wave: 'sine' },
+          { f: NOTES.E5, d: 1.8, v: 0.16, t: 3.6, wave: 'sine' }
+        ]
+      }
+    };
+
+    function startBackgroundMelody(key) {
+      stopBackgroundMelody();
+      if (!key || key === 'none') return;
+
+      const player = document.getElementById('bgmAudioPlayer');
+      if ((key === 'custom' || key === 'device') && cardConfig.customAudioUrl) {
+        if (player) {
+          player.src = cardConfig.customAudioUrl;
+          player.volume = 0.65;
+          player.play().catch(e => console.warn('Audio play:', e));
+        }
+        const floatBtn = document.getElementById('floatingMusicToggle');
+        if (floatBtn) floatBtn.classList.remove('hidden');
+        return;
+      }
+
+      const track = THEMATIC_MELODIES[key] || THEMATIC_MELODIES.love_piano;
+      const loopDuration = track.loopDuration || 5000;
+
+      function playPattern() {
+        if (!isSynthPlaying || isAudioMuted) return;
+        track.notes.forEach(n => {
+          playTone(n.f, n.wave || 'sine', n.d, n.v, n.t);
+        });
+      }
+
+      isSynthPlaying = true;
+      getAudioContext();
+      playPattern();
+      synthInterval = setInterval(playPattern, loopDuration);
+
+      const floatBtn = document.getElementById('floatingMusicToggle');
+      if (floatBtn) floatBtn.classList.remove('hidden');
+    }
+
+    function stopBackgroundMelody() {
+      if (synthInterval) {
+        clearInterval(synthInterval);
+        synthInterval = null;
+      }
+      isSynthPlaying = false;
+      const player = document.getElementById('bgmAudioPlayer');
+      if (player) {
+        player.pause();
+        player.currentTime = 0;
+      }
+      const floatBtn = document.getElementById('floatingMusicToggle');
+      if (floatBtn) floatBtn.classList.add('hidden');
+    }
+
+    function toggleMusicPlayback() {
+      isAudioMuted = !isAudioMuted;
+      const icon = document.getElementById('musicToggleIcon');
+      const player = document.getElementById('bgmAudioPlayer');
+      if (isAudioMuted) {
+        if (icon) icon.innerText = '🔇';
+        if (player) player.pause();
+      } else {
+        if (icon) icon.innerText = '🎵';
+        if (cardConfig.audioKey === 'custom' || cardConfig.audioKey === 'device') {
+          if (player && player.src) player.play();
+        } else {
+          startBackgroundMelody(cardConfig.audioKey);
+        }
+      }
+    }
+
+    function handleAudioSelection(val) {
+      cardConfig.audioKey = val;
+      const customInput = document.getElementById('cfgCustomAudioUrl');
+      const deviceBox = document.getElementById('deviceAudioUploadBox');
+
+      if (val === 'custom') {
+        if (customInput) customInput.classList.remove('hidden');
+        if (deviceBox) deviceBox.classList.add('hidden');
+      } else if (val === 'device') {
+        if (deviceBox) deviceBox.classList.remove('hidden');
+        if (customInput) customInput.classList.add('hidden');
+      } else {
+        if (customInput) customInput.classList.add('hidden');
+        if (deviceBox) deviceBox.classList.add('hidden');
+        if (val !== 'none') {
+          cardConfig.customAudioUrl = '';
+        }
+      }
+    }
+
+    function handleDeviceAudioUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const statusEl = document.getElementById('deviceAudioStatus');
+      const miniPlayer = document.getElementById('deviceAudioPreviewControl');
+      const wrapper = document.getElementById('deviceAudioPlayerWrapper');
+
+      try {
+        const objectUrl = URL.createObjectURL(file);
+        cardConfig.customAudioUrl = objectUrl;
+
+        if (miniPlayer) {
+          miniPlayer.src = objectUrl;
+          if (wrapper) wrapper.classList.remove('hidden');
+        }
+
+        if (statusEl) {
+          statusEl.innerText = `✅ Ready to play: ${file.name}`;
+          statusEl.className = 'text-[10px] text-emerald-600 font-bold';
+        }
+        showToast('MP3 loaded! Click ▶ Test or Play on the mini-player 🎵');
+      } catch (err) {
+        console.error('Audio load error:', err);
+        if (statusEl) statusEl.innerText = 'Error reading audio file format.';
+      }
+    }
+
+    function toggleAudioPreview() {
+      const btn = document.getElementById('previewAudioBtn');
+      const player = document.getElementById('bgmAudioPlayer');
+
+      if (isSynthPlaying || (player && !player.paused)) {
+        stopBackgroundMelody();
+        if (btn) {
+          btn.innerText = '▶ Test';
+          btn.className = 'px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs rounded-xl shrink-0 active:scale-95 transition';
+        }
+      } else {
+        const selectEl = document.getElementById('cfgAudioPreset');
+        const val = selectEl ? selectEl.value : 'love_piano';
+        if (val === 'custom') {
+          const custEl = document.getElementById('cfgCustomAudioUrl');
+          cardConfig.customAudioUrl = custEl ? custEl.value.trim() : '';
+        }
+        startBackgroundMelody(val);
+        if (btn) {
+          btn.innerText = '■ Stop';
+          btn.className = 'px-3 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shrink-0 active:scale-95 transition';
+        }
+      }
+    }
+
+    // 3. DYNAMIC COLOR & PATTERN LOGIC
+    function applyDynamicBackground(bgColor, patternColor) {
+      document.body.style.backgroundColor = bgColor;
+      document.body.style.backgroundImage = `
+        linear-gradient(45deg, ${patternColor} 25%, transparent 25%), 
+        linear-gradient(-45deg, ${patternColor} 25%, transparent 25%), 
+        linear-gradient(45deg, transparent 75%, ${patternColor} 75%), 
+        linear-gradient(-45deg, transparent 75%, ${patternColor} 75%)
+      `;
+      document.body.style.backgroundSize = "32px 32px";
+      document.body.style.backgroundPosition = "0 0, 0 16px, 16px -16px, -16px 0px";
+    }
+
+    function applyCustomLiveColor() {
+      const bgInput = document.getElementById('cfgCustomBg');
+      const patInput = document.getElementById('cfgCustomPattern');
+      const bg = bgInput ? bgInput.value : '#ffd6e0';
+      const pattern = patInput ? patInput.value : '#ffccd5';
+
+      const bgHex = document.getElementById('cfgCustomBgHex');
+      const patHex = document.getElementById('cfgCustomPatternHex');
+      if (bgHex) bgHex.innerText = bg;
+      if (patHex) patHex.innerText = pattern;
+
+      cardConfig.customBg = bg;
+      cardConfig.customPattern = pattern;
+      applyDynamicBackground(bg, pattern);
+    }
+
+    // 4. DYNAMIC LOOPS BUILDER
+    function renderLoopsUI() {
+      const container = document.getElementById('dynamicLoopsContainer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      cardConfig.loops.forEach((loop, index) => {
+        const row = document.createElement('div');
+        row.className = 'flex items-center gap-2 p-2 bg-white rounded-xl border border-pink-200';
+        row.innerHTML = `
+          <div class="flex flex-col items-center">
+            <span class="text-[9px] font-bold text-gray-500 mb-0.5">Taps</span>
+            <input type="number" min="1" max="20" value="${loop.count}" onchange="updateLoopValue(${index}, 'count', this.value)" class="w-12 text-center p-1 font-pixel text-xs border rounded-lg bg-pink-50 text-pink-700 font-bold focus:outline-none">
+          </div>
+          <div class="flex-grow">
+            <span class="block text-[9px] font-bold text-gray-500 mb-0.5">Loop ${index + 1} Speech Message:</span>
+            <input type="text" value="${loop.msg.replace(/"/g, '&quot;')}" onchange="updateLoopValue(${index}, 'msg', this.value)" class="w-full text-xs px-2.5 py-1 border rounded-lg focus:outline-none">
+          </div>
+          ${cardConfig.loops.length > 1 ? `
+            <button type="button" onclick="deleteLoopStage(${index})" class="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg text-xs font-bold transition" title="Delete loop">
+              ✕
+            </button>
+          ` : ''}
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function addLoopStage() {
+      const loopNumber = cardConfig.loops.length + 1;
+      cardConfig.loops.push({
+        count: 2,
+        msg: `Still no? Try again! Stage ${loopNumber} 💖`
+      });
+      renderLoopsUI();
+      showToast(`Added Loop Stage ${loopNumber}! ➕`);
+    }
+
+    function deleteLoopStage(index) {
+      if (cardConfig.loops.length <= 1) return;
+      cardConfig.loops.splice(index, 1);
+      renderLoopsUI();
+    }
+
+    function updateLoopValue(index, field, value) {
+      if (!cardConfig.loops[index]) return;
+      if (field === 'count') {
+        cardConfig.loops[index].count = Math.max(1, parseInt(value, 10) || 1);
+      } else {
+        cardConfig.loops[index].msg = value.trim();
+      }
+    }
+
+    // 5. TOKENS & VOUCHER CREDIT SYSTEM
+    function updateCreditDisplay() {
+      localStorage.setItem('user_tokens', userCredits.toString());
+      const badge = document.getElementById('creditBalanceBadge');
+      const modalBadge = document.getElementById('modalCreditCount');
+      if (badge) badge.innerText = `${userCredits} Credits`;
+      if (modalBadge) modalBadge.innerText = `${userCredits} Credits`;
+    }
+
+    function openCreditTopupModal() {
+      updateCreditDisplay();
+      const modal = document.getElementById('creditTopupModal');
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function closeCreditTopupModal() {
+      const modal = document.getElementById('creditTopupModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function redeemVoucherCode() {
+      const input = document.getElementById('voucherCodeInput');
+      if (!input) return;
+      const val = input.value.trim().toUpperCase();
+      const alertMsg = document.getElementById('voucherAlertMsg');
+
+      if (!val) {
+        if (alertMsg) {
+          alertMsg.innerText = 'Please enter a voucher code or reference number!';
+          alertMsg.className = 'text-[10px] text-rose-600 font-bold';
+        }
+        return;
+      }
+
+      if (val === 'FREE5') {
+        userCredits += 5;
+        updateCreditDisplay();
+        if (alertMsg) {
+          alertMsg.innerText = '🎉 Redeemed! +5 Credits added!';
+          alertMsg.className = 'text-[10px] text-emerald-600 font-bold';
+        }
+        input.value = '';
+        setTimeout(closeCreditTopupModal, 1200);
+      } else if (val === 'LOVE10') {
+        userCredits += 10;
+        updateCreditDisplay();
+        if (alertMsg) {
+          alertMsg.innerText = '🎉 Redeemed! +10 Credits added!';
+          alertMsg.className = 'text-[10px] text-emerald-600 font-bold';
+        }
+        input.value = '';
+        setTimeout(closeCreditTopupModal, 1200);
+      } else if (/^\d{11,14}$/.test(val)) {
+        userCredits += 10;
+        updateCreditDisplay();
+        if (alertMsg) {
+          alertMsg.innerText = `✅ GCash Ref #${val} accepted! +10 Credits added!`;
+          alertMsg.className = 'text-[10px] text-emerald-600 font-bold';
+        }
+        input.value = '';
+        setTimeout(closeCreditTopupModal, 1500);
+      } else {
+        if (alertMsg) {
+          alertMsg.innerText = 'Invalid voucher code or reference number. Please try again.';
+          alertMsg.className = 'text-[10px] text-rose-600 font-bold';
+        }
+      }
+    }
+
+    function selectTheme(themeKey) {
+      const t = THEMES[themeKey] || THEMES.love;
+      cardConfig.theme = themeKey;
+      cardConfig.customBg = t.bodyBg;
+      cardConfig.customPattern = t.patternBg;
+      cardConfig.loops = JSON.parse(JSON.stringify(t.loops));
+
+      const bgInput = document.getElementById('cfgCustomBg');
+      const patInput = document.getElementById('cfgCustomPattern');
+      const bgHex = document.getElementById('cfgCustomBgHex');
+      const patHex = document.getElementById('cfgCustomPatternHex');
+      const headerTitle = document.getElementById('headerBadgeTitle');
+
+      if (bgInput) bgInput.value = t.bodyBg;
+      if (patInput) patInput.value = t.patternBg;
+      if (bgHex) bgHex.innerText = t.bodyBg;
+      if (patHex) patHex.innerText = t.patternBg;
+      if (headerTitle) headerTitle.innerText = t.title;
+
+      applyDynamicBackground(t.bodyBg, t.patternBg);
+
+      const recipInput = document.getElementById('cfgRecipient');
+      const qInput = document.getElementById('cfgQuestion');
+      const celInput = document.getElementById('cfgCelebrationMsg');
+      const vanishInput = document.getElementById('cfgPostVanishYesText');
+
+      if (recipInput) recipInput.value = t.recipient;
+      if (qInput) qInput.value = t.q;
+      if (celInput) celInput.value = t.c;
+      if (vanishInput) vanishInput.value = t.vanish;
+
+      // Auto-select the theme's matching BGM preset
+      if (t.defaultBgm) {
+        cardConfig.audioKey = t.defaultBgm;
+        const audioSelect = document.getElementById('cfgAudioPreset');
+        if (audioSelect) {
+          audioSelect.value = t.defaultBgm;
+          handleAudioSelection(t.defaultBgm);
+        }
+      }
+
+      renderLoopsUI();
+
+      document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.classList.remove('border-pink-500', 'bg-pink-100', 'text-pink-700');
+        btn.classList.add('border-gray-200', 'bg-white', 'text-gray-700');
+      });
+      const activeBtn = document.getElementById(`tBtn-${themeKey}`);
+      if (activeBtn) {
+        activeBtn.classList.remove('border-gray-200', 'bg-white', 'text-gray-700');
+        activeBtn.classList.add('border-pink-500', 'bg-pink-100', 'text-pink-700');
+      }
+
+      const shareMsg = document.getElementById('shareCustomMsgInput');
+      if (shareMsg) {
+        shareMsg.value = `${t.sharePrefix} ${t.recipient}! Open your surprise here:`;
+      }
+    }
+
+    // 6. GENERATE INVITATION & ULTRA-COMPACT LINK
+    function generateInvitation() {
+      if (userCredits <= 0) {
+        openCreditTopupModal();
+        return;
+      }
+
+      userCredits--;
+      updateCreditDisplay();
+
+      cardConfig.recipient = document.getElementById('cfgRecipient').value.trim() || 'Cutie';
+      cardConfig.question = document.getElementById('cfgQuestion').value.trim();
+      cardConfig.celebrationMsg = document.getElementById('cfgCelebrationMsg').value.trim();
+      cardConfig.postVanishYesText = document.getElementById('cfgPostVanishYesText').value.trim() || "YES! I'M ALL YOURS! 🥰💖";
+
+      cardConfig.accountMsg = document.getElementById('cfgAccountMsg').value.trim();
+      cardConfig.accountNum = document.getElementById('cfgAccountNum').value.trim();
+      cardConfig.cardId = 'c_' + Math.random().toString(36).substring(2, 9);
+
+      // Protect against heavy payload: Keep recipient link ultra-short
+      let safeAudioKey = cardConfig.audioKey;
+      let safeAudioUrl = '';
+      if (safeAudioKey === 'device') {
+        safeAudioKey = 'love_piano'; // Built-in synthesizer for recipient
+      } else if (safeAudioKey === 'custom') {
+        safeAudioUrl = document.getElementById('cfgCustomAudioUrl').value.trim();
+      }
+
+      const t = THEMES[cardConfig.theme] || THEMES.love;
+      const isCustomBg = cardConfig.customBg !== t.bodyBg;
+      const isCustomPattern = cardConfig.customPattern !== t.patternBg;
+
+      const packedLoops = cardConfig.loops.map(l => [l.count, l.msg]);
+
+      const compactData = [
+        cardConfig.cardId,                                                    // 0: id
+        cardConfig.theme,                                                     // 1: theme
+        cardConfig.recipient,                                                 // 2: recipient name
+        packedLoops,                                                          // 3: dynamic loops
+        cardConfig.avatarType === 'photo' ? 'custom_photo' : cardConfig.mascot, // 4: mascot / photo indicator
+        cardConfig.hasAccount ? 1 : 0,                                        // 5: hasAccount
+        cardConfig.hasAccount ? cardConfig.accountNum : '',                   // 6: accountNum
+        cardConfig.question !== t.q ? cardConfig.question : '',                 // 7: custom Q
+        cardConfig.celebrationMsg !== t.c ? cardConfig.celebrationMsg : '',   // 8: custom celebration
+        cardConfig.postVanishYesText !== t.vanish ? cardConfig.postVanishYesText : '', // 9: custom post-vanish text
+        cardConfig.hasAccount && cardConfig.accountMsg !== 'Oo nga pala may Gcash ka balik ko din sa katapusan' ? cardConfig.accountMsg : '', // 10: acct msg
+        isCustomBg ? cardConfig.customBg : '',                                // 11: custom bg
+        isCustomPattern ? cardConfig.customPattern : '',                      // 12: custom pattern
+        safeAudioKey,                                                         // 13: safe audio preset key
+        safeAudioUrl,                                                         // 14: clean web audio url
+        cardConfig.avatarType === 'photo' ? cardConfig.customPhoto : '',      // 15: compressed avatar photo
+        cardConfig.hasAccount && cardConfig.customQrImage ? cardConfig.customQrImage : '' // 16: compressed GCash QR
+      ];
+
+      while (compactData.length > 5 && compactData[compactData.length - 1] === '') {
+        compactData.pop();
+      }
+
+      const jsonStr = JSON.stringify(compactData);
+      let encodedPayload = 'v3_' + (window.LZString ? LZString.compressToEncodedURIComponent(jsonStr) : btoa(encodeURIComponent(jsonStr)));
+
+      let baseUrl = document.getElementById('cfgVercelUrl').value.trim() || window.location.origin;
+      baseUrl = baseUrl.replace(/\/+$/, '');
+      let finalShareUrl = `${baseUrl}/#c=${encodedPayload}`;
+      currentShareUrl = finalShareUrl;
+
+      document.getElementById('linkDensityBadge').innerText = `Compact (${encodedPayload.length} chars)`;
+      document.getElementById('shareCustomMsgInput').value = `${t.sharePrefix} ${cardConfig.recipient}! Open your surprise here:`;
+      document.getElementById('shareUrlOnlyInput').value = finalShareUrl;
+
+      document.getElementById('shareSection').classList.remove('hidden');
+      showToast('Invitation generated! Photo & QR ready! ✨');
+    }
+
+    // 7. ENVELOPE OPENING & RECIPIENT LOGIC
+    function openEnvelope() {
+      startBackgroundMelody(cardConfig.audioKey || 'love_piano');
+
+      document.getElementById('envelopeStage').classList.add('hidden');
+      document.getElementById('proposalWindowStage').classList.remove('hidden');
+      confetti({ particleCount: 30, spread: 60, origin: { y: 0.6 } });
+    }
+
+    function loadRecipientUI(cfg) {
+      if (cfg.cardId && localStorage.getItem('claimed_' + cfg.cardId)) {
+        document.getElementById('envelopeStage').classList.add('hidden');
+        document.getElementById('proposalWindowStage').classList.add('hidden');
+        document.getElementById('celebrationStage').classList.add('hidden');
+        document.getElementById('lockedClaimedStage').classList.remove('hidden');
+        return;
+      }
+
+      document.getElementById('lockedClaimedStage').classList.add('hidden');
+      const t = THEMES[cfg.theme] || THEMES.love;
+
+      applyDynamicBackground(cfg.customBg || t.bodyBg, cfg.customPattern || t.patternBg);
+
+      document.getElementById('dispEnvelopeIcon').innerText = t.icon;
+      document.getElementById('dispEnvRecipient').innerText = `For ${cfg.recipient} ✨`;
+      document.getElementById('dispWinThemeLabel').innerText = `${t.title}:`;
+      document.getElementById('dispWinToBadge').innerText = cfg.recipient;
+      document.getElementById('dispWinIcons').innerText = t.icons;
+      document.getElementById('dispCardRecipient').innerText = `To: ${cfg.recipient} 💕`;
+      document.getElementById('dispQuestionText').innerText = cfg.question;
+
+      const avatarBox = document.getElementById('dispAvatarBox');
+      if (cfg.avatarType === 'photo' && cfg.customPhoto) {
+        avatarBox.innerHTML = `<img src="${cfg.customPhoto}" class="w-20 h-20 rounded-full object-cover border-2 border-pink-400 shadow" alt="Avatar">`;
+      } else {
+        const anim = CALENDAR_ANIMALS.find(a => a.id === cfg.mascot) || CALENDAR_ANIMALS[0];
+        avatarBox.innerHTML = `
+          <span class="text-5xl">${anim.emoji}</span>
+          <span class="text-[10px] font-bold text-pink-700 mt-1 uppercase">${anim.name}</span>
+        `;
+      }
+
+      document.getElementById('dispCelebrationEmoji').innerText = t.celebrationEmoji;
+      document.getElementById('dispCelebrationTitle').innerText = t.celebrationTitle;
+      document.getElementById('dispCelebrationText').innerText = cfg.celebrationMsg;
+
+      const accBox = document.getElementById('dispAccountBox');
+      if (cfg.hasAccount) {
+        accBox.classList.remove('hidden');
+        document.getElementById('dispAccountMsgText').innerText = cfg.accountMsg || 'Oo nga pala may Gcash ka balik ko din sa katapusan';
+        document.getElementById('dispAccountNumText').innerText = cfg.accountNum || '09195471229';
+
+        const qrContainer = document.getElementById('dispQrContainer');
+        const qrImg = document.getElementById('dispQrImage');
+        if (cfg.customQrImage) {
+          qrImg.src = cfg.customQrImage;
+          qrContainer.classList.remove('hidden');
+        } else {
+          qrContainer.classList.add('hidden');
+        }
+      } else {
+        accBox.classList.add('hidden');
+      }
+
+      resetButtonsState();
+    }
+
+    function showView(view) {
+      if (isLockedRecipientMode && view === 'sender') return;
+
+      const vSender = document.getElementById('viewSender');
+      const vRecipient = document.getElementById('viewRecipient');
+      const tabSender = document.getElementById('tabSenderBtn');
+      const tabRecipient = document.getElementById('tabRecipientBtn');
+
+      if (view === 'sender') {
+        if (vSender) vSender.classList.remove('hidden');
+        if (vRecipient) vRecipient.classList.add('hidden');
+        stopBackgroundMelody();
+
+        if (tabSender) tabSender.className = "px-3.5 py-1 text-xs font-bold rounded-full bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-sm transition";
+        if (tabRecipient) tabRecipient.className = "px-3.5 py-1 text-xs font-bold rounded-full text-pink-600 hover:text-pink-800 transition";
+      } else {
+        if (vSender) vSender.classList.add('hidden');
+        if (vRecipient) vRecipient.classList.remove('hidden');
+
+        if (tabRecipient) tabRecipient.className = "px-3.5 py-1 text-xs font-bold rounded-full bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-sm transition";
+        if (tabSender) tabSender.className = "px-3.5 py-1 text-xs font-bold rounded-full text-pink-600 hover:text-pink-800 transition";
+      }
+    }
+
+    function testRecipientMode() {
+      const recipInput = document.getElementById('cfgRecipient');
+      const qInput = document.getElementById('cfgQuestion');
+      const celInput = document.getElementById('cfgCelebrationMsg');
+      const vanishInput = document.getElementById('cfgPostVanishYesText');
+      const acctMsgInput = document.getElementById('cfgAccountMsg');
+      const acctNumInput = document.getElementById('cfgAccountNum');
+
+      cardConfig.recipient = recipInput ? recipInput.value.trim() || 'Cutie' : 'Cutie';
+      cardConfig.question = qInput ? qInput.value.trim() : 'Will you go out with me? 💖';
+      cardConfig.celebrationMsg = celInput ? celInput.value.trim() : '';
+      cardConfig.postVanishYesText = vanishInput ? vanishInput.value.trim() || "YES! I'M ALL YOURS! 🥰💖" : "YES! I'M ALL YOURS! 🥰💖";
+      cardConfig.accountMsg = acctMsgInput ? acctMsgInput.value.trim() : '';
+      cardConfig.accountNum = acctNumInput ? acctNumInput.value.trim() : '';
+
+      if (cardConfig.audioKey === 'custom') {
+        const custAudio = document.getElementById('cfgCustomAudioUrl');
+        cardConfig.customAudioUrl = custAudio ? custAudio.value.trim() : '';
+      }
+
+      loadRecipientUI(cardConfig);
+      replayCardPresentation();
+      showView('recipient');
+    }
+
+    function renderMascotPicker() {
+      const container = document.getElementById('mascotPickerBox');
+      if (!container) return;
+      container.innerHTML = '';
+      CALENDAR_ANIMALS.forEach(animal => {
+        const isSelected = cardConfig.mascot === animal.id;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `p-1.5 rounded-xl border flex flex-col items-center justify-center transition active:scale-95 ${
+          isSelected ? 'bg-pink-100 border-pink-500 text-pink-700' : 'bg-white border-gray-200 hover:border-pink-300'
+        }`;
+        btn.innerHTML = `
+          <span class="text-xl">${animal.emoji}</span>
+          <span class="text-[9px] font-bold mt-0.5">${animal.name}</span>
+        `;
+        btn.onclick = () => {
+          cardConfig.mascot = animal.id;
+          renderMascotPicker();
+        };
+        container.appendChild(btn);
+      });
+    }
+
+    function toggleAvatarChoice(type) {
+      cardConfig.avatarType = type;
+      const mascotBox = document.getElementById('mascotPickerBox');
+      const photoBox = document.getElementById('photoUploadBox');
+      if (type === 'mascot') {
+        if (mascotBox) mascotBox.classList.remove('hidden');
+        if (photoBox) photoBox.classList.add('hidden');
+      } else {
+        if (mascotBox) mascotBox.classList.add('hidden');
+        if (photoBox) photoBox.classList.remove('hidden');
+      }
+    }
+
+    function handlePhotoUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const maxDim = 140;
+          let w = img.width;
+          let h = img.height;
+          if (w > h) {
+            if (w > maxDim) { h = Math.round((h * maxDim) / w); w = maxDim; }
+          } else {
+            if (h > maxDim) { w = Math.round((w * maxDim) / h); h = maxDim; }
+          }
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+
+          cardConfig.customPhoto = canvas.toDataURL('image/jpeg', 0.6);
+          cardConfig.avatarType = 'photo';
+          const previewImg = document.getElementById('photoPreviewImg');
+          previewImg.src = cardConfig.customPhoto;
+          document.getElementById('photoPreviewBox').classList.remove('hidden');
+          showToast('Photo uploaded & resized! 📸');
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function handleQrUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const maxDim = 180;
+          let w = img.width;
+          let h = img.height;
+          if (w > h) {
+            if (w > maxDim) { h = Math.round((h * maxDim) / w); w = maxDim; }
+          } else {
+            if (h > maxDim) { w = Math.round((w * maxDim) / h); h = maxDim; }
+          }
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+
+          cardConfig.customQrImage = canvas.toDataURL('image/jpeg', 0.6);
+          const previewImg = document.getElementById('qrPreviewImg');
+          previewImg.src = cardConfig.customQrImage;
+          document.getElementById('qrPreviewBox').classList.remove('hidden');
+          showToast('GCash QR uploaded! 💳');
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removeUploadedQr() {
+      cardConfig.customQrImage = '';
+      const previewBox = document.getElementById('qrPreviewBox');
+      if (previewBox) previewBox.classList.add('hidden');
+      const input = document.getElementById('qrFileInput');
+      if (input) input.value = '';
+      showToast('QR code removed');
+    }
+
+    function toggleAccountSection() {
+      const box = document.getElementById('toggleAccountBox');
+      const isChecked = box ? box.checked : false;
+      cardConfig.hasAccount = isChecked;
+      const fields = document.getElementById('accountConfigFields');
+      if (fields) {
+        if (isChecked) {
+          fields.classList.remove('hidden');
+        } else {
+          fields.classList.add('hidden');
+        }
+      }
+    }
+
+    function copyLinkOnly() {
+      const input = document.getElementById('shareUrlOnlyInput');
+      if (!input) return;
+      input.select();
+      input.setSelectionRange(0, 99999);
+      try {
+        document.execCommand('copy');
+        showToast('Link copied to clipboard! 📋');
+      } catch (err) {
+        console.error('Failed to copy', err);
+      }
+    }
+
+    function copyCombinedMessageAndLink() {
+      const msgEl = document.getElementById('shareCustomMsgInput');
+      const urlEl = document.getElementById('shareUrlOnlyInput');
+      const msg = msgEl ? msgEl.value.trim() : '';
+      const url = urlEl ? urlEl.value.trim() : '';
+      const combined = `${msg}\n${url}`;
+
+      const tempInput = document.createElement('textarea');
+      tempInput.value = combined;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      try {
+        document.execCommand('copy');
+        showToast('Message + Link copied! 💌');
+      } catch (err) {
+        console.error('Copy failed', err);
+      }
+      document.body.removeChild(tempInput);
+    }
+
+    function shareWhatsApp() {
+      const msgEl = document.getElementById('shareCustomMsgInput');
+      const urlEl = document.getElementById('shareUrlOnlyInput');
+      const msg = msgEl ? msgEl.value.trim() : '';
+      const url = urlEl ? urlEl.value.trim() : '';
+      const text = encodeURIComponent(`${msg}\n${url}`);
+      window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+    }
+
+    function copyRecipientAccount() {
+      const accEl = document.getElementById('dispAccountNumText');
+      const acc = accEl ? accEl.innerText.trim() : '';
+      const tempInput = document.createElement('input');
+      tempInput.value = acc;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      try {
+        document.execCommand('copy');
+        showToast('Account Number copied! 💳');
+      } catch (err) {
+        console.error('Copy failed', err);
+      }
+      document.body.removeChild(tempInput);
+    }
+
+    function showToast(text) {
+      const existing = document.getElementById('customToast');
+      if (existing) existing.remove();
+
+      const toast = document.createElement('div');
+      toast.id = 'customToast';
+      toast.className = 'fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-gray-900/90 text-white text-xs px-4 py-2 rounded-full shadow-2xl z-50 animate-bounce font-bold';
+      toast.innerText = text;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 2500);
+    }
+
+    function initDodgeListeners() {
+      const noBtn = document.getElementById('noBtn');
+      if (!noBtn) return;
+      ['touchstart', 'pointerdown', 'mouseover'].forEach(evt => {
+        noBtn.addEventListener(evt, (e) => {
+          e.preventDefault();
+          dodgeNoButton();
+        });
+      });
+    }
+
+    function dodgeNoButton() {
+      if (isNoVanished) return;
+
+      dodgeTapCount++;
+      const loops = cardConfig.loops || [
+        { count: 2, msg: 'Are you sure? 🥺' },
+        { count: 4, msg: 'Wait no! 😱' },
+        { count: 2, msg: "You can't escape! 💕" }
+      ];
+
+      const bubble = document.getElementById('dodgeSpeechBubble');
+      const noBtn = document.getElementById('noBtn');
+      const yesBtn = document.getElementById('yesBtn');
+
+      if (bubble) bubble.style.opacity = '1';
+
+      let cumulative = 0;
+      let currentMsg = '';
+      for (let i = 0; i < loops.length; i++) {
+        cumulative += loops[i].count;
+        if (dodgeTapCount <= cumulative) {
+          currentMsg = loops[i].msg;
+          break;
+        }
+      }
+
+      const totalTaps = loops.reduce((acc, l) => acc + l.count, 0);
+
+      if (dodgeTapCount <= totalTaps) {
+        if (bubble) bubble.innerText = currentMsg;
+      } else {
+        isNoVanished = true;
+        if (noBtn) noBtn.style.display = 'none';
+        if (bubble) bubble.innerText = "NO has vanished! Only YES remains! 💍";
+
+        if (yesBtn) {
+          yesBtn.className = "w-full py-3 bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold rounded-xl shadow-lg text-xs font-pixel transition-all animate-pulse z-10 flex items-center justify-center";
+          yesBtn.innerText = cardConfig.postVanishYesText || "YES! I'M ALL YOURS! 🥰💖";
+        }
+
+        if (window.confetti) {
+          confetti({ particleCount: 25, spread: 45, origin: { y: 0.7 } });
+        }
+        return;
+      }
+
+      const playArea = document.getElementById('playAreaZone');
+      if (!playArea || !noBtn) return;
+      const maxLeft = Math.max(10, playArea.clientWidth - noBtn.clientWidth - 12);
+      const maxTop = Math.max(10, playArea.clientHeight - noBtn.clientHeight - 10);
+
+      const randomX = Math.max(8, Math.floor(Math.random() * maxLeft));
+      const randomY = Math.max(6, Math.floor(Math.random() * maxTop));
+
+      noBtn.style.position = 'absolute';
+      noBtn.style.left = `${randomX}px`;
+      noBtn.style.top = `${randomY}px`;
+      noBtn.style.transform = `rotate(${(Math.random() - 0.5) * 16}deg)`;
+    }
+
+    function acceptYes() {
+      if (cardConfig.cardId && cardConfig.cardId !== 'default_card') {
+        localStorage.setItem('claimed_' + cardConfig.cardId, '1');
+      }
+      const propStage = document.getElementById('proposalWindowStage');
+      const celStage = document.getElementById('celebrationStage');
+      if (propStage) propStage.classList.add('hidden');
+      if (celStage) celStage.classList.remove('hidden');
+
+      if (window.confetti) {
+        confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+      }
+    }
+
+    function replayCardPresentation() {
+      resetButtonsState();
+      const celStage = document.getElementById('celebrationStage');
+      const propStage = document.getElementById('proposalWindowStage');
+      const envStage = document.getElementById('envelopeStage');
+      if (celStage) celStage.classList.add('hidden');
+      if (propStage) propStage.classList.add('hidden');
+      if (envStage) envStage.classList.remove('hidden');
+    }
+
+    function resetButtonsState() {
+      dodgeTapCount = 0;
+      isNoVanished = false;
+
+      const noBtn = document.getElementById('noBtn');
+      if (noBtn) {
+        noBtn.style.display = 'block';
+        noBtn.style.position = 'absolute';
+        noBtn.style.left = '64%';
+        noBtn.style.top = '34%';
+        noBtn.style.transform = 'none';
+      }
+
+      const bubble = document.getElementById('dodgeSpeechBubble');
+      if (bubble) {
+        bubble.style.opacity = '0';
+        bubble.innerText = '';
+      }
+
+      const yesBtn = document.getElementById('yesBtn');
+      if (yesBtn) {
+        yesBtn.className = "px-6 py-2.5 bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold rounded-xl shadow-md text-sm font-pixel transition-all active:scale-95 z-10 flex items-center justify-center gap-1";
+        yesBtn.innerText = "YES! 🥰";
+      }
+    }
+
+    // 8. CHECK URL HASH & RECIPIENT ISOLATION
+    function checkUrlHash() {
+      const hash = window.location.hash;
+      if (!hash) return;
+
+      if (hash.startsWith('#c=')) {
+        try {
+          const raw = hash.replace('#c=', '');
+          
+          if (raw.startsWith('v3_')) {
+            const body = raw.replace('v3_', '');
+            let jsonStr = '';
+            if (window.LZString) {
+              jsonStr = LZString.decompressFromEncodedURIComponent(body);
+            }
+            if (!jsonStr) {
+              jsonStr = decodeURIComponent(atob(body));
+            }
+            const arr = JSON.parse(jsonStr);
+            const thKey = arr[1] || 'love';
+            const t = THEMES[thKey] || THEMES.love;
+
+            const parsedLoops = (arr[3] || []).map(item => ({
+              count: item[0],
+              msg: item[1]
+            }));
+
+            const hasCustomPhoto = arr[4] === 'custom_photo' || (arr[15] && arr[15].length > 0);
+
+            cardConfig = {
+              cardId: arr[0] || 'card_' + Math.random().toString(36).substring(2, 7),
+              theme: thKey,
+              recipient: arr[2] || 'Cutie',
+              loops: parsedLoops.length ? parsedLoops : t.loops,
+              mascot: hasCustomPhoto ? 'pig' : (arr[4] || 'pig'),
+              avatarType: hasCustomPhoto ? 'photo' : 'mascot',
+              customPhoto: arr[15] || '',
+              hasAccount: !!arr[5],
+              accountNum: arr[6] || '09195471229',
+              question: arr[7] || t.q,
+              celebrationMsg: arr[8] || t.c,
+              postVanishYesText: arr[9] || t.vanish,
+              accountMsg: arr[10] || 'Oo nga pala may Gcash ka balik ko din sa katapusan',
+              customBg: arr[11] || '',
+              customPattern: arr[12] || '',
+              audioKey: arr[13] || t.defaultBgm || 'love_piano',
+              customAudioUrl: arr[14] || '',
+              customQrImage: arr[16] || ''
+            };
+          } else if (raw.startsWith('v2_')) {
+            const body = raw.replace('v2_', '');
+            let jsonStr = '';
+            if (window.LZString) {
+              jsonStr = LZString.decompressFromEncodedURIComponent(body);
+            }
+            if (!jsonStr) {
+              jsonStr = decodeURIComponent(atob(body));
+            }
+            const arr = JSON.parse(jsonStr);
+            const thKey = arr[1] || 'love';
+            const t = THEMES[thKey] || THEMES.love;
+
+            cardConfig = {
+              cardId: arr[0] || 'card_' + Math.random().toString(36).substring(2, 7),
+              theme: thKey,
+              recipient: arr[2] || 'Cutie',
+              loops: [
+                { count: arr[3] ?? 2, msg: arr[12] || t.loops[0].msg },
+                { count: arr[4] ?? 4, msg: arr[13] || t.loops[1].msg },
+                { count: arr[5] ?? 2, msg: arr[14] || t.loops[2].msg }
+              ],
+              mascot: arr[6] || 'pig',
+              avatarType: 'mascot',
+              customPhoto: '',
+              hasAccount: !!arr[7],
+              accountNum: arr[8] || '09195471229',
+              question: arr[9] || t.q,
+              celebrationMsg: arr[10] || t.c,
+              postVanishYesText: arr[11] || t.vanish,
+              accountMsg: arr[15] || 'Oo nga pala may Gcash ka balik ko din sa katapusan',
+              customBg: arr[16] || '',
+              customPattern: arr[17] || '',
+              audioKey: arr[18] || t.defaultBgm || 'love_piano',
+              customAudioUrl: arr[19] || ''
+            };
+          }
+
+          // STRICT RECIPIENT MODE ISOLATION
+          isLockedRecipientMode = true;
+          
+          const topNavTabs = document.getElementById('topNavTabs');
+          if (topNavTabs) topNavTabs.style.display = 'none';
+
+          const topAppHeader = document.getElementById('topAppHeader');
+          if (topAppHeader) {
+            topAppHeader.innerHTML = `
+              <div class="w-full flex items-center justify-center">
+                <div class="flex items-center gap-2 bg-white/85 px-4 py-1.5 rounded-full border-2 border-pink-300 shadow-sm">
+                  <span>💌</span>
+                  <span class="font-pixel text-[10px] text-pink-600 font-bold">${THEMES[cardConfig.theme]?.title || 'LOVE.EXE'}</span>
+                </div>
+              </div>
+            `;
+          }
+
+          const vSender = document.getElementById('viewSender');
+          if (vSender) vSender.remove();
+
+          const backBtn = document.getElementById('recipientBackToStudioBtn');
+          if (backBtn) backBtn.remove();
+
+          loadRecipientUI(cardConfig);
+          showView('recipient');
+          return;
+        } catch (e) {
+          console.error('Error decoding card payload', e);
+        }
+      }
+    }
+
+    // 9. APP INITIALIZATION
+    window.addEventListener('DOMContentLoaded', () => {
+      updateCreditDisplay();
+      renderMascotPicker();
+      renderLoopsUI();
+      initDodgeListeners();
+
+      const storedVercel = localStorage.getItem('user_vercel_url');
+      const vercelInput = document.getElementById('cfgVercelUrl');
+      if (storedVercel && vercelInput) {
+        vercelInput.value = storedVercel;
+      } else if (vercelInput && !window.location.hostname.includes('usercontent.goog')) {
+        vercelInput.value = window.location.origin;
+      }
+
+      checkUrlHash();
+    });
+  </script>
+</body>
+</html>
