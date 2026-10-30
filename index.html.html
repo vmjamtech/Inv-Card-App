@@ -1,0 +1,1343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Cute Proposal & Love Letter</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Pixel & Kawaii fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;600;700&family=Press+Start+2P&family=Silkscreen&display=swap" rel="stylesheet">
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            pixel: ['"Press Start 2P"', 'monospace'],
+            retro: ['Silkscreen', 'cursive'],
+            cute: ['Fredoka', 'sans-serif'],
+            wedding: ['Cinzel', 'serif'],
+            corporate: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            pastelPink: '#ffd6e0',
+            deepPink: '#ff758f',
+            vibrantPink: '#ff4d6d',
+            darkPink: '#c9184a',
+            creamBg: '#fff0f3',
+            cardBg: '#fff8fa',
+            windowBorder: '#ff8fa3',
+          },
+          keyframes: {
+            floatHeart: {
+              '0%': { transform: 'translateY(100vh) scale(0.6) rotate(0deg)', opacity: '0.9' },
+              '100%': { transform: 'translateY(-10vh) scale(1.2) rotate(360deg)', opacity: '0' },
+            },
+            wobble: {
+              '0%, 100%': { transform: 'rotate(-3deg) scale(1)' },
+              '50%': { transform: 'rotate(3deg) scale(1.04)' }
+            },
+            popIn: {
+              '0%': { transform: 'scale(0.85)', opacity: '0' },
+              '70%': { transform: 'scale(1.03)' },
+              '100%': { transform: 'scale(1)', opacity: '1' }
+            }
+          },
+          animation: {
+            wobble: 'wobble 2s ease-in-out infinite',
+            popIn: 'popIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * {
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      box-sizing: border-box;
+    }
+
+    body {
+      touch-action: manipulation;
+      overflow-x: hidden;
+      font-family: 'Fredoka', sans-serif;
+      transition: background 0.4s ease;
+    }
+
+    /* THEME GRADIENTS & BACKGROUNDS */
+    body.theme-love {
+      background: radial-gradient(circle at 50% 20%, #ffe5ec 0%, #ffccd5 45%, #fff0f3 100%);
+    }
+    body.theme-wedding {
+      background: radial-gradient(circle at 50% 20%, #fdfbf7 0%, #f5ece2 45%, #ebdcd0 100%);
+    }
+    body.theme-birthday {
+      background: radial-gradient(circle at 50% 20%, #e0f2fe 0%, #ede9fe 45%, #fae8ff 100%);
+    }
+    body.theme-office {
+      background: radial-gradient(circle at 50% 20%, #f1f5f9 0%, #e2e8f0 45%, #cbd5e1 100%);
+    }
+    body.theme-booking {
+      background: radial-gradient(circle at 50% 20%, #ecfdf5 0%, #d1fae5 45%, #ccfbf1 100%);
+    }
+
+    /* THEME PATTERNS */
+    .theme-love .gingham-pattern {
+      background-color: #ffe5ec;
+      background-image: 
+        linear-gradient(45deg, rgba(255, 182, 193, 0.45) 25%, transparent 25%, transparent 75%, rgba(255, 182, 193, 0.45) 75%),
+        linear-gradient(45deg, rgba(255, 182, 193, 0.45) 25%, transparent 25%, transparent 75%, rgba(255, 182, 193, 0.45) 75%);
+      background-size: 22px 22px;
+    }
+    .theme-wedding .gingham-pattern {
+      background-color: #fdfaf6;
+      background-image: radial-gradient(#d4af37 0.75px, transparent 0.75px);
+      background-size: 16px 16px;
+    }
+    .theme-birthday .gingham-pattern {
+      background-color: #faf5ff;
+      background-image: 
+        linear-gradient(45deg, rgba(168, 85, 247, 0.15) 25%, transparent 25%, transparent 75%, rgba(168, 85, 247, 0.15) 75%),
+        linear-gradient(45deg, rgba(59, 130, 246, 0.15) 25%, transparent 25%, transparent 75%, rgba(59, 130, 246, 0.15) 75%);
+      background-size: 20px 20px;
+    }
+    .theme-office .gingham-pattern {
+      background-color: #f8fafc;
+      background-image: linear-gradient(to right, rgba(100, 116, 139, 0.1) 1px, transparent 1px),
+                        linear-gradient(to bottom, rgba(100, 116, 139, 0.1) 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+    .theme-booking .gingham-pattern {
+      background-color: #f0fdf4;
+      background-image: linear-gradient(to right, rgba(16, 185, 129, 0.12) 1px, transparent 1px),
+                        linear-gradient(to bottom, rgba(16, 185, 129, 0.12) 1px, transparent 1px);
+      background-size: 18px 18px;
+    }
+
+    .retro-window-box {
+      box-shadow: 
+        0 14px 28px rgba(0, 0, 0, 0.08),
+        0 8px 10px rgba(0, 0, 0, 0.04),
+        inset 2px 2px 0px rgba(255, 255, 255, 0.8);
+    }
+
+    #hearts-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .floating-item {
+      position: absolute;
+      bottom: -40px;
+      animation: floatHeart 6s linear infinite;
+      opacity: 0.65;
+    }
+
+    #noBtn {
+      transition: left 0.16s ease-out, top 0.16s ease-out, transform 0.15s ease-out;
+      will-change: left, top, transform;
+    }
+
+    #toast {
+      transition: all 0.3s ease-in-out;
+      transform: translateY(100px);
+      opacity: 0;
+    }
+    #toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen w-full relative flex flex-col justify-between items-center text-gray-800 p-3 sm:p-6 overflow-y-auto theme-love">
+
+  <!-- Background Animated Floating Elements -->
+  <div id="hearts-container"></div>
+
+  <!-- Header / Mode Switcher -->
+  <header class="w-full max-w-md mx-auto z-20 flex items-center justify-between py-2 px-1">
+    <div class="flex items-center space-x-2">
+      <span id="themeHeaderIcon" class="text-2xl animate-bounce">💌</span>
+      <h1 id="themeHeaderTitle" class="font-pixel text-[11px] sm:text-xs text-darkPink tracking-wider font-bold">INVITE.EXE</h1>
+    </div>
+    <div class="flex items-center space-x-1.5 bg-white/80 backdrop-blur-sm p-1 rounded-full border border-pink-200 shadow-sm" id="headerNavPill">
+      <button id="navCreateBtn" onclick="switchView('create')" class="px-3 py-1 text-xs font-semibold rounded-full transition-all bg-deepPink text-white shadow-sm">
+        ✏️ Sender
+      </button>
+      <button id="navPreviewBtn" onclick="testAsRecipient()" class="px-3 py-1 text-xs font-semibold rounded-full transition-all text-gray-600 hover:text-darkPink">
+        💌 Recipient
+      </button>
+    </div>
+  </header>
+
+  <!-- Status Banner -->
+  <div id="themeStatusBanner" class="w-full max-w-md mx-auto z-10 flex items-center justify-between text-[11px] bg-white/70 backdrop-blur-sm px-3.5 py-1.5 rounded-xl border border-pink-100 text-gray-500 mb-2">
+    <span class="flex items-center space-x-1.5">
+      <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+      <span id="bannerThemeTag" class="font-medium">Love Theme Active</span>
+    </span>
+    <span class="font-pixel text-[9px] text-deepPink bg-pink-50 px-2 py-0.5 rounded-md border border-pink-200" id="badgeOneTime">1-TIME PASS</span>
+  </div>
+
+  <!-- MAIN VIEWPORT CONTAINER -->
+  <main class="w-full max-w-md mx-auto z-10 flex-grow flex items-center justify-center my-2 relative min-h-[540px]">
+
+    <!-- ========================================== -->
+    <!-- 1. CREATOR / SENDER SETUP VIEW            -->
+    <!-- ========================================== -->
+    <div id="creatorView" class="w-full bg-white/95 backdrop-blur-md border-2 border-windowBorder rounded-3xl p-5 shadow-xl space-y-4">
+      
+      <!-- THEME SELECTOR -->
+      <div>
+        <label class="block text-xs font-bold text-darkPink mb-1.5 font-pixel flex items-center justify-between">
+          <span>🎨 Choose Theme</span>
+          <span class="text-[9px] font-normal text-gray-500">Auto-fills smart presets</span>
+        </label>
+        <div class="grid grid-cols-5 gap-1.5 text-center text-xs">
+          <button type="button" onclick="applyThemePreset('love')" id="themeBtn-love" class="theme-select-btn p-2 rounded-2xl border-2 border-deepPink bg-pink-100 font-bold flex flex-col items-center">
+            <span class="text-base">💌</span>
+            <span class="text-[9px] mt-0.5">Love</span>
+          </button>
+          <button type="button" onclick="applyThemePreset('wedding')" id="themeBtn-wedding" class="theme-select-btn p-2 rounded-2xl border-2 border-amber-200 bg-white hover:border-amber-400 font-medium flex flex-col items-center">
+            <span class="text-base">💍</span>
+            <span class="text-[9px] mt-0.5">Wedding</span>
+          </button>
+          <button type="button" onclick="applyThemePreset('birthday')" id="themeBtn-birthday" class="theme-select-btn p-2 rounded-2xl border-2 border-purple-200 bg-white hover:border-purple-400 font-medium flex flex-col items-center">
+            <span class="text-base">🎂</span>
+            <span class="text-[9px] mt-0.5">Birthday</span>
+          </button>
+          <button type="button" onclick="applyThemePreset('office')" id="themeBtn-office" class="theme-select-btn p-2 rounded-2xl border-2 border-slate-200 bg-white hover:border-slate-400 font-medium flex flex-col items-center">
+            <span class="text-base">💼</span>
+            <span class="text-[9px] mt-0.5">Meeting</span>
+          </button>
+          <button type="button" onclick="applyThemePreset('booking')" id="themeBtn-booking" class="theme-select-btn p-2 rounded-2xl border-2 border-emerald-200 bg-white hover:border-emerald-400 font-medium flex flex-col items-center">
+            <span class="text-base">📅</span>
+            <span class="text-[9px] mt-0.5">Booking</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="space-y-3">
+        <!-- Recipient Name -->
+        <div>
+          <label class="block text-xs font-bold text-darkPink mb-1">To (Recipient Name / Nickname):</label>
+          <input type="text" id="cfgRecipient" value="Cutie" placeholder="e.g. Cutie pie, Guest, Colleague..." maxlength="30"
+            class="w-full px-3.5 py-2 rounded-2xl border-2 border-pink-200 focus:border-deepPink focus:outline-none text-sm font-medium bg-pink-50/50">
+        </div>
+
+        <!-- Proposal Question -->
+        <div>
+          <label class="block text-xs font-bold text-darkPink mb-1">Question / RSVP Invite (Step 1):</label>
+          <textarea id="cfgQuestion" rows="2" placeholder="e.g. Will you go out with me? 💖" maxlength="120"
+            class="w-full px-3.5 py-2 rounded-2xl border-2 border-pink-200 focus:border-deepPink focus:outline-none text-sm font-medium bg-pink-50/50 resize-none">Will you go out with me? 💖</textarea>
+        </div>
+
+        <!-- 3-STAGE NO DODGE LOOPS & MESSAGES -->
+        <div class="bg-pink-100/60 p-3 rounded-2xl border border-pink-200 space-y-2.5" id="dodgeConfigBox">
+          <div class="flex items-center justify-between">
+            <label class="text-[11px] font-bold text-darkPink font-pixel">"NO" Escape Stages</label>
+            <span class="text-[9px] bg-white px-2 py-0.5 rounded-full text-deepPink font-semibold shadow-xs">Vanishes after Loop 3</span>
+          </div>
+          
+          <!-- Loop 1 -->
+          <div class="bg-white/85 p-2 rounded-xl border border-pink-200 space-y-1">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-bold text-gray-700">Loop 1 (First Taps)</span>
+              <div class="flex items-center space-x-1.5">
+                <span class="text-[10px] text-gray-500">Taps:</span>
+                <input type="number" id="cfgLoop1Count" min="1" max="15" value="2"
+                  class="w-12 text-center py-0.5 text-xs font-bold rounded-lg border border-pink-300 focus:outline-none focus:border-deepPink bg-pink-50">
+              </div>
+            </div>
+            <input type="text" id="cfgLoop1Msg" value="Are you sure? 🥺" maxlength="45"
+              class="w-full px-2 py-1 text-xs font-medium rounded-lg border border-pink-200 focus:outline-none focus:border-deepPink bg-white">
+          </div>
+
+          <!-- Loop 2 -->
+          <div class="bg-white/85 p-2 rounded-xl border border-pink-200 space-y-1">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-bold text-gray-700">Loop 2 (Next Taps)</span>
+              <div class="flex items-center space-x-1.5">
+                <span class="text-[10px] text-gray-500">Taps:</span>
+                <input type="number" id="cfgLoop2Count" min="1" max="15" value="4"
+                  class="w-12 text-center py-0.5 text-xs font-bold rounded-lg border border-pink-300 focus:outline-none focus:border-deepPink bg-pink-50">
+              </div>
+            </div>
+            <input type="text" id="cfgLoop2Msg" value="Wait no! 😱" maxlength="45"
+              class="w-full px-2 py-1 text-xs font-medium rounded-lg border border-pink-200 focus:outline-none focus:border-deepPink bg-white">
+          </div>
+
+          <!-- Loop 3 -->
+          <div class="bg-white/85 p-2 rounded-xl border border-pink-200 space-y-1">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-bold text-gray-700">Loop 3 (Final Taps before Vanish!)</span>
+              <div class="flex items-center space-x-1.5">
+                <span class="text-[10px] text-gray-500">Taps:</span>
+                <input type="number" id="cfgLoop3Count" min="1" max="15" value="1"
+                  class="w-12 text-center py-0.5 text-xs font-bold rounded-lg border border-pink-300 focus:outline-none focus:border-deepPink bg-pink-50">
+              </div>
+            </div>
+            <input type="text" id="cfgLoop3Msg" value="You can't escape! 💕" maxlength="45"
+              class="w-full px-2 py-1 text-xs font-medium rounded-lg border border-pink-200 focus:outline-none focus:border-deepPink bg-white">
+          </div>
+        </div>
+
+        <!-- NEW: EDITABLE POST-VANISH YES BUTTON TEXT -->
+        <div>
+          <label class="block text-xs font-bold text-darkPink mb-1 flex items-center justify-between">
+            <span>Text When NO Vanishes:</span>
+            <span class="text-[10px] text-gray-500 font-normal">Displayed on full-width button</span>
+          </label>
+          <input type="text" id="cfgPostVanishYesText" value="YES! I'M ALL YOURS! 🥰💖" maxlength="40"
+            class="w-full px-3.5 py-2 rounded-2xl border-2 border-pink-200 focus:border-deepPink focus:outline-none text-xs font-bold bg-pink-50/50 text-darkPink">
+        </div>
+
+        <!-- Celebration Message for YES -->
+        <div>
+          <label class="block text-xs font-bold text-darkPink mb-1">Celebration Message for YES (Step 2):</label>
+          <textarea id="cfgMessage" rows="2" maxlength="140"
+            class="w-full px-3.5 py-2 rounded-2xl border-2 border-pink-200 focus:border-deepPink focus:outline-none text-sm font-medium bg-pink-50/50 resize-none">I know you will answer yes since you like me very very much! 🥰✨</textarea>
+        </div>
+
+        <!-- NEW: VISUAL AVATAR SELECTOR (MASCOT VS OWN PICTURE) -->
+        <div class="bg-pink-50/70 p-3 rounded-2xl border border-pink-200 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-bold text-darkPink font-pixel">Card Picture / Visual</label>
+            <div class="flex items-center space-x-2 text-xs font-medium">
+              <label class="inline-flex items-center cursor-pointer">
+                <input type="radio" name="avatarType" value="mascot" checked onchange="handleAvatarTypeChange()" class="mr-1 text-deepPink focus:ring-deepPink">
+                <span>Mascot</span>
+              </label>
+              <label class="inline-flex items-center cursor-pointer">
+                <input type="radio" name="avatarType" value="customPhoto" onchange="handleAvatarTypeChange()" class="mr-1 text-deepPink focus:ring-deepPink">
+                <span>Upload Photo</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Section A: 12 Calendar Animal Mascot Picker -->
+          <div id="mascotSection" class="space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] text-gray-600 font-medium">Select Mascot:</span>
+              <span id="selectedMascotLabel" class="text-[11px] font-pixel text-deepPink font-bold">PIG</span>
+            </div>
+            <div class="grid grid-cols-4 gap-1.5 max-h-36 overflow-y-auto p-1.5 border border-pink-200 rounded-2xl bg-white" id="mascotPicker">
+              <!-- Animals rendered via JS -->
+            </div>
+          </div>
+
+          <!-- Section B: Upload Own Picture (e.g. Wedding Photo / Celebrant / Company Logo) -->
+          <div id="customPhotoSection" class="hidden space-y-2">
+            <p class="text-[11px] text-gray-500">Upload your couple photo, celebrant snapshot, or team logo:</p>
+            <input type="file" id="cfgCustomPhotoInput" accept="image/*" onchange="handleCustomPhotoUpload(event)"
+              class="w-full text-xs text-gray-500 file:mr-2 file:py-1 file:px-2.5 file:rounded-xl file:border-0 file:text-[10px] file:font-semibold file:bg-pink-100 file:text-darkPink hover:file:bg-pink-200">
+            <div id="customPhotoThumbBox" class="hidden flex items-center space-x-2 pt-1">
+              <div class="w-16 h-16 rounded-2xl border-2 border-pink-300 overflow-hidden bg-white shadow-sm">
+                <img id="customPhotoThumb" class="w-full h-full object-cover" />
+              </div>
+              <button type="button" onclick="clearCustomPhoto()" class="text-xs text-red-500 hover:text-red-700 underline font-medium">
+                Remove Photo
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- OPTIONAL ACCOUNT / QR SURPRISE TOGGLE -->
+        <div class="bg-pink-50/80 p-3 rounded-2xl border border-pink-200 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-1.5">
+              <span class="text-sm">🎁</span>
+              <label class="text-xs font-bold text-darkPink font-pixel">Account / Gift / QR Info</label>
+            </div>
+            <!-- Toggle Switch -->
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="toggleAccountMode" onchange="toggleAccountSection()" class="sr-only peer">
+              <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-deepPink"></div>
+            </label>
+          </div>
+
+          <!-- Collapsible Box -->
+          <div id="accountConfigBox" class="hidden space-y-2 pt-1 border-t border-pink-200/70">
+            <div>
+              <label class="block text-[11px] font-bold text-gray-700 mb-0.5">Upload QR Code Picture:</label>
+              <input type="file" id="cfgQrImageInput" accept="image/*" onchange="handleQrUpload(event)"
+                class="w-full text-xs text-gray-500 file:mr-2 file:py-1 file:px-2.5 file:rounded-xl file:border-0 file:text-[10px] file:font-semibold file:bg-pink-100 file:text-darkPink hover:file:bg-pink-200">
+              <div id="qrPreviewThumb" class="hidden mt-1.5 w-16 h-16 rounded-xl border border-pink-300 overflow-hidden bg-white p-1">
+                <img id="qrThumbImg" class="w-full h-full object-contain" />
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-bold text-gray-700 mb-0.5">Message:</label>
+              <input type="text" id="cfgAccountMsg" value="Send Gcash balik ko din sa monday" maxlength="60"
+                class="w-full px-2.5 py-1.5 text-xs rounded-xl border border-pink-200 focus:outline-none focus:border-deepPink bg-white">
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-bold text-gray-700 mb-0.5">ACCOUNT NUMBER:</label>
+              <input type="text" id="cfgAccountNum" value="09195471229" maxlength="30"
+                class="w-full px-2.5 py-1.5 text-xs rounded-xl border border-pink-200 focus:outline-none focus:border-deepPink bg-white font-mono">
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="pt-2 flex flex-col gap-2">
+        <button onclick="generateLoveCard()" class="w-full py-3 bg-gradient-to-r from-deepPink to-darkPink text-white font-bold rounded-2xl shadow-lg hover:shadow-pink-300 transition-all active:scale-95 flex items-center justify-center space-x-2 text-xs font-pixel tracking-wider">
+          <span id="genBtnIcon">💌</span>
+          <span id="genBtnText">GENERATE INVITATION CARD</span>
+        </button>
+
+        <button onclick="testAsRecipient()" class="w-full py-2.5 bg-pink-100 hover:bg-pink-200 text-darkPink border border-pink-300 font-bold rounded-2xl text-xs transition-all flex items-center justify-center space-x-1.5">
+          <span>👀</span>
+          <span>Open As Recipient (Instant Test)</span>
+        </button>
+      </div>
+
+      <!-- Generated Link & Share Box -->
+      <div id="generatedLinkBox" class="hidden bg-pink-50/90 border-2 border-pink-300 rounded-2xl p-4 space-y-3 animate-popIn">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-1.5">
+            <span class="text-base">💌</span>
+            <span class="text-xs font-bold text-darkPink font-pixel">Card Ready</span>
+          </div>
+          <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-emerald-100 text-emerald-700">Ready</span>
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-bold text-gray-600 mb-1">Masked Invitation Text:</label>
+          <div class="relative">
+            <input id="shareSnippetDisplay" readonly value=""
+              class="w-full text-xs font-mono bg-white p-2.5 rounded-xl border border-pink-200 text-gray-700 select-all pr-8 overflow-ellipsis" />
+            <button onclick="copyGeneratedLink()" class="absolute right-2 top-2 text-xs bg-pink-100 hover:bg-pink-200 text-darkPink px-2 py-0.5 rounded-md font-bold">Copy</button>
+          </div>
+        </div>
+
+        <!-- 1-Tap Share Buttons -->
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="shareViaNative()" class="py-2.5 bg-gradient-to-r from-deepPink to-darkPink text-white rounded-xl text-xs font-bold flex items-center justify-center space-x-1 shadow-md active:scale-95">
+            <span>✨</span>
+            <span>Share Invitation</span>
+          </button>
+          <button onclick="shareViaWhatsApp()" class="py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold flex items-center justify-center space-x-1 shadow-md active:scale-95">
+            <span>💬</span>
+            <span>Send WhatsApp</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- 2. RECIPIENT CARD INTERACTIVE VIEW        -->
+    <!-- ========================================== -->
+    <div id="cardView" class="w-full hidden flex-col items-center justify-center">
+
+      <!-- ENVELOPE INTRO STAGE -->
+      <div id="envelopeStage" class="w-full flex flex-col items-center justify-center animate-popIn">
+        <div onclick="openEnvelope()" class="cursor-pointer group relative flex flex-col items-center transition-transform hover:scale-105 active:scale-95">
+          <div class="relative w-64 h-48 bg-white border-4 border-deepPink rounded-2xl shadow-2xl overflow-hidden flex items-center justify-center" id="envelopeBox">
+            <div id="envelopeFlap" class="absolute top-0 left-0 w-0 h-0 border-l-[124px] border-l-transparent border-r-[124px] border-r-transparent border-t-[90px] border-t-pink-200 z-10"></div>
+            <div id="envelopeInner" class="absolute bottom-0 left-0 w-full h-full bg-pink-50"></div>
+            <div id="envelopeBadge" class="relative z-20 w-12 h-12 bg-vibrantPink rounded-full flex items-center justify-center shadow-md animate-pulse">
+              <span id="envelopeIcon" class="text-xl">💌</span>
+            </div>
+          </div>
+          <div class="mt-4 text-center">
+            <p id="envelopeTeaserTitle" class="font-pixel text-[11px] text-darkPink tracking-wide mb-1">A Little Surprise for You</p>
+            <p id="envelopeTeaserSub" class="text-xs text-gray-500 font-medium animate-bounce">Tap the invitation to open! ✨</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- MAIN RETRO PROPOSAL WINDOW -->
+      <div id="retroCardContainer" class="w-full hidden animate-popIn">
+        <div id="cardBoundary" class="w-full max-w-[370px] mx-auto bg-cardBg border-4 border-windowBorder rounded-3xl overflow-hidden retro-window-box relative">
+          
+          <!-- Retro Window Header -->
+          <div id="windowHeader" class="bg-gradient-to-r from-pink-300 via-pink-400 to-deepPink px-3 py-2 border-b-2 border-windowBorder flex items-center justify-between select-none">
+            <div class="flex items-center space-x-1.5">
+              <span id="windowHeaderIcon" class="text-xs">💖</span>
+              <span id="windowHeaderTitle" class="font-retro text-[11px] text-white tracking-widest font-bold uppercase drop-shadow-sm">INVITE.EXE</span>
+            </div>
+            <div class="flex space-x-1.5">
+              <div class="w-3 h-3 rounded-full bg-yellow-200 border border-yellow-400"></div>
+              <div class="w-3 h-3 rounded-full bg-pink-200 border border-pink-400"></div>
+              <div class="w-3 h-3 rounded-full bg-red-300 border border-red-500"></div>
+            </div>
+          </div>
+
+          <!-- Proposal Body -->
+          <div class="gingham-pattern p-4 relative min-h-[390px] flex flex-col justify-between items-center overflow-hidden">
+            
+            <div class="flex items-center justify-center space-x-2 text-darkPink/60 text-xs tracking-widest mb-1" id="topThreeIcons">
+              <span>❤</span>
+              <span>❤</span>
+              <span>❤</span>
+            </div>
+
+            <!-- Recipient & Question -->
+            <div class="text-center z-10 px-2 my-auto">
+              <div id="cardRecipientBadge" class="inline-block text-[11px] font-bold text-darkPink bg-white/90 px-3 py-0.5 rounded-full shadow-sm mb-2 font-pixel">
+                To: Cutie 💖
+              </div>
+              <h2 id="cardQuestionText" class="text-base sm:text-lg font-bold text-gray-800 leading-snug break-words">
+                Will you go out with me? 💖
+              </h2>
+            </div>
+
+            <!-- Mascot OR Custom Photo Display -->
+            <div id="mascotDisplay" class="my-2 z-10 flex flex-col items-center justify-center">
+              <div class="relative bg-white/85 border-2 border-pink-300 rounded-2xl p-2.5 shadow-md flex flex-col items-center">
+                <div id="mascotIconContainer" class="w-20 h-20 flex items-center justify-center overflow-hidden rounded-xl animate-wobble">
+                  <!-- Dynamic SVG Mascot OR Custom Uploaded Photo -->
+                </div>
+                <div id="mascotLabel" class="text-[10px] font-pixel text-darkPink font-bold mt-1 uppercase tracking-wider">
+                  PIG
+                </div>
+              </div>
+
+              <!-- Dodge Speech Reaction -->
+              <div id="dodgeReaction" class="h-6 text-[11px] font-pixel text-darkPink mt-2 opacity-0 transition-all font-bold px-3 py-0.5 rounded-full bg-white/90 shadow-xs border border-pink-200">
+                Are you sure? 🥺
+              </div>
+            </div>
+
+            <!-- Interactive Play Area: NO strictly stays inside -->
+            <div id="btnInteractiveArea" class="w-full relative h-32 flex items-center justify-center z-20 border-2 border-dashed border-pink-300/80 rounded-2xl bg-white/70 p-2 overflow-hidden shadow-inner">
+              
+              <!-- YES BUTTON (Flex layout, no clipping) -->
+              <button id="yesBtn" onclick="handleYesClicked()" 
+                class="px-8 py-3 bg-white text-darkPink border-2 border-darkPink rounded-2xl font-pixel text-xs tracking-wider shadow-lg hover:bg-pink-500 hover:text-white transition-all transform active:scale-95 duration-150 font-bold z-10">
+                YES 🥰
+              </button>
+
+              <!-- DODGING NO BUTTON -->
+              <button id="noBtn"
+                class="absolute px-5 py-2.5 bg-gray-100 text-gray-700 border-2 border-gray-300 rounded-xl font-pixel text-[10px] tracking-wider shadow-md cursor-pointer select-none z-20">
+                NO 😢
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2: CELEBRATION POPUP / CARD -->
+      <div id="successCard" class="w-full max-w-[370px] mx-auto hidden bg-cardBg border-4 border-windowBorder rounded-3xl overflow-hidden retro-window-box animate-popIn">
+        <div id="successHeader" class="bg-gradient-to-r from-deepPink to-vibrantPink px-4 py-2 border-b-2 border-windowBorder flex items-center justify-between text-white">
+          <span id="successHeaderTitle" class="font-retro text-xs tracking-wider font-bold">INVITATION ACCEPTED! ✨</span>
+          <span id="successHeaderIcons" class="text-sm">💖💖💖</span>
+        </div>
+        <div class="gingham-pattern p-5 text-center space-y-3.5">
+          <div id="successCelebrationEmoji" class="text-4xl animate-bounce">🎉🥳💕</div>
+          <h3 id="successTitle" class="font-pixel text-xs sm:text-sm text-darkPink font-bold leading-normal">
+            YAYYY! CONFIRMED!
+          </h3>
+          <div class="bg-white/90 border-2 border-pink-200 rounded-2xl p-3.5 shadow-sm">
+            <p id="celebrationFinalMsg" class="text-gray-800 text-xs sm:text-sm font-semibold leading-relaxed">
+              I know you will answer yes since you like me very very much! 🥰✨
+            </p>
+          </div>
+
+          <!-- Optional Account / QR Display -->
+          <div id="successAccountBox" class="hidden bg-white/95 border-2 border-pink-300 rounded-2xl p-3.5 shadow-sm space-y-2 text-left">
+            <div id="successQrDisplay" class="hidden flex justify-center pb-1">
+              <img id="successQrImg" class="max-h-36 max-w-full rounded-xl border border-pink-200 object-contain shadow-xs" />
+            </div>
+            <div class="text-center font-medium text-xs text-gray-700 italic" id="successAccountMsg">
+              Send Gcash balik ko din sa monday
+            </div>
+            <div class="bg-pink-50 p-2.5 rounded-xl border border-pink-200 flex items-center justify-between">
+              <div>
+                <span class="text-[9px] font-bold text-gray-400 uppercase tracking-wider block">ACCOUNT NUMBER:</span>
+                <span id="successAccountNum" class="text-xs font-bold text-darkPink font-mono select-all">09195471229</span>
+              </div>
+              <button onclick="copyAccountNumber()" class="px-2.5 py-1 bg-deepPink hover:bg-darkPink text-white text-[10px] font-bold rounded-lg shadow-xs active:scale-95">
+                Copy
+              </button>
+            </div>
+          </div>
+
+          <!-- Buttons: Replay, Reply, Create Another -->
+          <div class="space-y-2 pt-1">
+            <button onclick="replayCard()" class="w-full py-2.5 bg-pink-100 hover:bg-pink-200 text-darkPink font-bold rounded-2xl text-xs font-pixel tracking-wider border border-pink-300 transition-all active:scale-95 flex items-center justify-center space-x-1.5 shadow-xs">
+              <span>🔁</span>
+              <span>Replay Card</span>
+            </button>
+            <button onclick="shareResponseReply()" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-2xl text-xs font-pixel tracking-wider shadow-md transition-all active:scale-95 flex items-center justify-center space-x-1.5">
+              <span>💬</span>
+              <span>Send WhatsApp / Reply!</span>
+            </button>
+            <button onclick="switchView('create')" class="w-full py-2 bg-white hover:bg-pink-50 text-gray-600 font-medium rounded-2xl text-xs transition-all border border-pink-100">
+              Create Another Card 💌
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Notification Toast -->
+  <div id="toast" class="fixed bottom-6 z-50 bg-gray-900/90 text-white px-5 py-2.5 rounded-full text-xs font-medium backdrop-blur-sm shadow-xl flex items-center space-x-2">
+    <span id="toastIcon">✨</span>
+    <span id="toastMsg">Link copied to clipboard!</span>
+  </div>
+
+  <!-- Audio Synthesizer -->
+  <script>
+    let audioCtx = null;
+    function getAudioCtx() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function playDodgeSound() {
+      try {
+        const ctx = getAudioCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(320, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(700, ctx.currentTime + 0.12);
+        gain.gain.setValueAtTime(0.2, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.12);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.12);
+      } catch (e) {}
+    }
+
+    function playPoofSound() {
+      try {
+        const ctx = getAudioCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(450, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(120, ctx.currentTime + 0.25);
+        gain.gain.setValueAtTime(0.2, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.25);
+      } catch (e) {}
+    }
+
+    function playCelebrationSound() {
+      try {
+        const ctx = getAudioCtx();
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+        notes.forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.1);
+          gain.gain.setValueAtTime(0, ctx.currentTime + idx * 0.1);
+          gain.gain.linearRampToValueAtTime(0.25, ctx.currentTime + idx * 0.1 + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.1 + 0.4);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(ctx.currentTime + idx * 0.1);
+          osc.stop(ctx.currentTime + idx * 0.1 + 0.42);
+        });
+      } catch (e) {}
+    }
+  </script>
+
+  <!-- Application Logic & Multi-Theme Config -->
+  <script>
+    // 5 RICH THEMES WITH PRESETS
+    const themePresets = {
+      love: {
+        id: 'love',
+        name: 'Love & Proposal',
+        bodyClass: 'theme-love',
+        primary: '#ff4d6d',
+        deep: '#c9184a',
+        headerIcon: '💌',
+        headerTitle: 'LOVE.EXE',
+        envelopeIcon: '💌',
+        bannerText: 'Love Theme Active',
+        topIcons: '❤ ❤ ❤',
+        question: 'Will you go out with me? 💖',
+        recipient: 'Cutie',
+        loop1Msg: 'Are you sure? 🥺',
+        loop2Msg: 'Wait no! 😱',
+        loop3Msg: "You can't escape! 💕",
+        postVanishYesText: "YES! I'M ALL YOURS! 🥰💖",
+        message: 'I know you will answer yes since you like me very very much! 🥰✨',
+        celebrationTitle: "YAYYY! IT'S A MATCH!",
+        celebrationEmoji: '🎉🥳💕',
+        floatingItems: ['💖', '💕', '💗', '💓', '✨']
+      },
+      wedding: {
+        id: 'wedding',
+        name: 'Wedding RSVP',
+        bodyClass: 'theme-wedding',
+        primary: '#d4af37',
+        deep: '#996515',
+        headerIcon: '💍',
+        headerTitle: 'WEDDING.RSVP',
+        envelopeIcon: '💍',
+        bannerText: 'Wedding Theme Active',
+        topIcons: '✦ 💍 ✦',
+        question: 'Will you grace us with your presence at our wedding?',
+        recipient: 'Honored Guest',
+        loop1Msg: 'Please don\'t decline! 🥺',
+        loop2Msg: 'We reserved a seat for you! 🥂',
+        loop3Msg: 'You must celebrate with us! 💒',
+        postVanishYesText: "YES! I'LL BE THERE! 💍✨",
+        message: 'We are thrilled! Can\'t wait to celebrate our special day together! 🥂👰🤵',
+        celebrationTitle: 'HONORED TO HAVE YOU! 💍',
+        celebrationEmoji: '🥂💒✨',
+        floatingItems: ['💍', '🥂', '🕊️', '💐', '✨']
+      },
+      birthday: {
+        id: 'birthday',
+        name: 'Birthday Party',
+        bodyClass: 'theme-birthday',
+        primary: '#8b5cf6',
+        deep: '#6d28d9',
+        headerIcon: '🎂',
+        headerTitle: 'PARTY.EXE',
+        envelopeIcon: '🎁',
+        bannerText: 'Birthday Theme Active',
+        topIcons: '🎈 🎂 🎈',
+        question: 'Are you coming to celebrate my birthday party? 🥳',
+        recipient: 'Bestie',
+        loop1Msg: 'No cake for you then? 🎂',
+        loop2Msg: 'Party won\'t be the same! 🎉',
+        loop3Msg: 'Attendance is mandatory! 🎈',
+        postVanishYesText: 'YES! READY TO PARTY! 🎂🥳',
+        message: 'Woohoo! Get ready for endless music, fun, cake, and drinks! 🎈🍕🍰',
+        celebrationTitle: 'LET\'S PARTY! 🥳🎉',
+        celebrationEmoji: '🎂🎈🎁',
+        floatingItems: ['🎈', '🎂', '🎉', '🎁', '✨']
+      },
+      office: {
+        id: 'office',
+        name: 'Office Meeting',
+        bodyClass: 'theme-office',
+        primary: '#2563eb',
+        deep: '#1e40af',
+        headerIcon: '💼',
+        headerTitle: 'SYNC.INVITE',
+        envelopeIcon: '📅',
+        bannerText: 'Office Meeting Theme Active',
+        topIcons: '📊 💼 📊',
+        question: 'Can you join our upcoming project strategy sync? 📈',
+        recipient: 'Team Lead',
+        loop1Msg: 'Declining a team sync? 👀',
+        loop2Msg: 'Agenda requires your input! 💡',
+        loop3Msg: 'Calendar slot is locked! 🔒',
+        postVanishYesText: 'YES! CONFIRMED ON CALENDAR! 💼✅',
+        message: 'Meeting accepted! Looking forward to a productive session. 📊☕',
+        celebrationTitle: 'SYNC CONFIRMED! 💼',
+        celebrationEmoji: '📊📈🤝',
+        floatingItems: ['💼', '📊', '☕', '💡', '📌']
+      },
+      booking: {
+        id: 'booking',
+        name: 'Booking Schedule',
+        bodyClass: 'theme-booking',
+        primary: '#059669',
+        deep: '#047857',
+        headerIcon: '📅',
+        headerTitle: 'BOOKING.LOCK',
+        envelopeIcon: '⏰',
+        bannerText: 'Booking Theme Active',
+        topIcons: '⏰ 📅 ⏰',
+        question: 'Ready to confirm and lock in your appointment slot?',
+        recipient: 'Valued Client',
+        loop1Msg: 'Slot might get taken! ⏳',
+        loop2Msg: 'Only 1 spot remaining! ⚡',
+        loop3Msg: 'Final chance to secure! 🎯',
+        postVanishYesText: 'YES! BOOK MY SLOT! 📅✅',
+        message: 'Your slot is officially locked! See you at the scheduled time. ✨🗓️',
+        celebrationTitle: 'APPOINTMENT LOCKED! 📅',
+        celebrationEmoji: '📅✅⏳',
+        floatingItems: ['📅', '⏰', '✨', '🌿', '🎯']
+      }
+    };
+
+    // 12 Calendar Animals with Clean Display Names
+    const calendarAnimals = {
+      pig: {
+        name: 'PIG',
+        emoji: '🐷',
+        color: '#ff4d6d',
+        svg: `<svg viewBox="0 0 48 48" class="w-14 h-14"><polygon points="15,14 18,20 12,20" fill="#ff758f"/><polygon points="33,14 36,20 30,20" fill="#ff758f"/><circle cx="24" cy="27" r="13" fill="#ffb3c1"/><circle cx="18" cy="25" r="2.2" fill="#2b2d42"/><circle cx="30" cy="25" r="2.2" fill="#2b2d42"/><ellipse cx="24" cy="31" rx="6" ry="4" fill="#ff758f"/><circle cx="22" cy="31" r="1.3" fill="#ffffff"/><circle cx="26" cy="31" r="1.3" fill="#ffffff"/><path d="M24 38 L20 34 L28 34 Z" fill="#ff4d6d"/></svg>`
+      },
+      rat: { 
+        name: 'RAT', 
+        emoji: '🐭', 
+        color: '#e76f51',
+        svg: `<svg viewBox="0 0 48 48" class="w-14 h-14"><circle cx="16" cy="14" r="7" fill="#f4a261"/><circle cx="32" cy="14" r="7" fill="#f4a261"/><ellipse cx="24" cy="28" rx="14" ry="12" fill="#e76f51"/><circle cx="20" cy="26" r="2" fill="#2b2d42"/><circle cx="28" cy="26" r="2" fill="#2b2d42"/><circle cx="24" cy="31" r="2" fill="#ff758f"/><path d="M24 38 L20 34 L28 34 Z" fill="#ff4d6d"/></svg>` 
+      },
+      ox: { 
+        name: 'OX', 
+        emoji: '🐂', 
+        color: '#8d6e63',
+        svg: `<svg viewBox="0 0 48 48" class="w-14 h-14"><path d="M12 18 Q10 8 16 10 M36 18 Q38 8 32 10" stroke="#ffb703" stroke-width="3" stroke-linecap="round" fill="none"/><ellipse cx="24" cy="27" rx="14" ry="13" fill="#8d6e63"/><circle cx="19" cy="24" r="2" fill="#2b2d42"/><circle cx="29" cy="24" r="2" fill="#2b2d42"/><ellipse cx="24" cy="32" rx="8" ry="5" fill="#ffccd5"/><circle cx="21" cy="32" r="1.5" fill="#2b2d42"/><circle cx="27" cy="32" r="1.5" fill="#2b2d42"/><path d="M24 38 L20 34 L28 34 Z" fill="#ff4d6d"/></svg>` 
+      },
+      tiger: { 
+        name: 'TIGER', 
+        emoji: '🐯', 
+        color: '#f77f00',
+        svg: `<svg viewBox="0 0 48 48" class="w-14 h-14"><circle cx="15" cy="14" r="6" fill="#f77f00"/><circle cx="33" cy="14" r="6" fill="#f77f00"/><ellipse cx="24" cy="27" rx="14" ry="13" fill="#faa307"/><circle cx="19" cy="25" r="2.2" fill="#2b2d42"/><circle cx="29" cy="25" r="2.2" fill="#2b2d42"/><ellipse cx="24" cy="31" rx="6" ry="4" fill="#ffffff"/><circle cx="24" cy="30" r="1.5" fill="#ff4d6d"/><path d="M24 38 L20 34 L28 34 Z" fill="#ff4d6d"/></svg>` 
+      },
+      rabbit: { 
+        name: 'RABBIT', 
+        emoji: '🐰', 
+        color: '#ff758f',
+        svg: `<svg viewBox="0 0 48 48" class="w-14 h-14"><ellipse cx="18" cy="14" rx="4" ry="10" fill="#ffffff" stroke="#ffccd5" stroke-width="1.5"/><ellipse cx="30" cy="14" rx="4" ry="10" fill="#ffffff" stroke="#ffccd5" stroke-width="1.5"/><circle cx="24" cy="29" r="12" fill="#ffffff"/><circle cx="20" cy="27" r="2" fill="#ff4d6d"/><circle cx="28" cy="27" r="2" fill="#ff4d6d"/><ellipse cx="24" cy="32" rx="2.5" ry="1.8" fill="#ff758f"/><path d="M24 38 L20 34 L28 34 Z" fill="#ff4d6d"/></svg>` 
+      },
+      dragon: { 
+        name: 'DRAGON', 
+        emoji: '🐲', 
+        color: '#52b788',
+        svg: `<svg viewBox="0 0 48 48" class="w-14 h-14"><ellipse cx="24" cy="27" rx="14" ry="13" fill="#52b788"/><circle cx="19" cy="24" r="2" fill="#1b4332"/><circle cx="29" cy="24" r="2" fill="#1b4332"/><ellipse cx="24" cy="32" rx="8" ry="5" fill="#b7e4c7"/><circle cx="22" cy="32" r="1.3" fill="#2d6a4f"/><circle cx="26" cy="32" r="1.3" fill="#2d6a4f"/><path d="M24 38 L20 34 L28 34 Z" fill="#ff4d6d"/></svg>` 
+      },
+      snake: { 
+        name: 'SNAKE', 
+        emoji: '🐍', 
+        color: '#2a9d8f',
+        svg: `<svg viewBox="0 0 48 48" class="w-14 h-14"><ellipse cx="24" cy="24" rx="13" ry="11" fill="#74c69d"/><circle cx="19" cy="23" r="2.2" fill="#1b4332"/><circle cx="29" cy="23" r="2.2" fill="#1b4332"/><path d="M24 38 L20 34 L28 34 Z" fill="#ff4d6d"/></svg>` 
+      },
+      horse: { 
+        name: 'HORSE', 
+        emoji: '🐴', 
+        color: '#a06cd5',
+        svg: `<svg viewBox="0 0 48 48" class="w-14 h-14"><ellipse cx="24" cy="27" rx="13" ry="14" fill="#a06cd5"/><circle cx="19" cy="24" r="2" fill="#2b2d42"/><circle cx="29" cy="24" r="2" fill="#2b2d42"/><ellipse cx="24" cy="33" rx="7" ry="5" fill="#e0aaff"/><path d="M24 38 L20 34 L28 34 Z" fill="#ff4d6d"/></svg>` 
+      },
+      goat: { 
+        name: 'GOAT', 
+        emoji: '🐑', 
+        color: '#e07a5f',
+        svg: `<svg viewBox="0 0 48 48" class="w-14 h-14"><path d="M12 18 Q8 10 16 11 M36 18 Q40 10 32 11" stroke="#f4a261" stroke-width="2.5" fill="none"/><circle cx="24" cy="27" r="13" fill="#f8edeb"/><circle cx="19" cy="25" r="2" fill="#2b2d42"/><circle cx="29" cy="25" r="2" fill="#2b2d42"/><path d="M24 38 L20 34 L28 34 Z" fill="#ff4d6d"/></svg>` 
+      },
+      monkey: { 
+        name: 'MONKEY', 
+        emoji: '🐵', 
+        color: '#b07d62',
+        svg: `<svg viewBox="0 0 48 48" class="w-14 h-14"><circle cx="24" cy="26" r="13" fill="#b07d62"/><ellipse cx="24" cy="28" rx="10" ry="8" fill="#eddcd2"/><circle cx="20" cy="25" r="2" fill="#2b2d42"/><circle cx="28" cy="25" r="2" fill="#2b2d42"/><path d="M24 38 L20 34 L28 34 Z" fill="#ff4d6d"/></svg>` 
+      },
+      rooster: { 
+        name: 'ROOSTER', 
+        emoji: '🐔', 
+        color: '#d90429',
+        svg: `<svg viewBox="0 0 48 48" class="w-14 h-14"><polygon points="24,28 27,31 21,31" fill="#f77f00"/><circle cx="24" cy="27" r="13" fill="#ffffff"/><circle cx="20" cy="25" r="2" fill="#2b2d42"/><path d="M24 38 L20 34 L28 34 Z" fill="#ff4d6d"/></svg>` 
+      },
+      dog: { 
+        name: 'DOG', 
+        emoji: '🐶', 
+        color: '#ddb892',
+        svg: `<svg viewBox="0 0 48 48" class="w-14 h-14"><circle cx="24" cy="27" r="13" fill="#ddb892"/><circle cx="19" cy="25" r="2" fill="#2b2d42"/><circle cx="29" cy="25" r="2" fill="#2b2d42"/><ellipse cx="24" cy="30" rx="3" ry="2" fill="#43281c"/><path d="M24 38 L20 34 L28 34 Z" fill="#ff4d6d"/></svg>` 
+      }
+    };
+
+    // State
+    const defaultData = {
+      theme: 'love',
+      recipient: "Cutie",
+      question: "Will you go out with me? 💖",
+      message: "I know you will answer yes since you like me very very much! 🥰✨",
+      postVanishYesText: "YES! I'M ALL YOURS! 🥰💖",
+      avatarType: 'mascot', // 'mascot' or 'customPhoto'
+      mascot: "pig",
+      customPhotoDataUrl: "",
+      loop1Count: 2,
+      loop1Msg: "Are you sure? 🥺",
+      loop2Count: 4,
+      loop2Msg: "Wait no! 😱",
+      loop3Count: 1,
+      loop3Msg: "You can't escape! 💕",
+      useAccount: false,
+      accountMsg: "Send Gcash balik ko din sa monday",
+      accountNum: "09195471229",
+      qrDataUrl: ""
+    };
+
+    let proposalData = { ...defaultData };
+    let noDodgeCount = 0;
+    let isNoVanished = false;
+
+    // Apply Theme Preset
+    function applyThemePreset(themeKey) {
+      const preset = themePresets[themeKey] || themePresets.love;
+      proposalData.theme = themeKey;
+
+      // Update UI theme buttons
+      document.querySelectorAll('.theme-select-btn').forEach(btn => {
+        btn.classList.remove('border-deepPink', 'bg-pink-100', 'scale-105', 'font-bold');
+        btn.classList.add('border-gray-200', 'bg-white', 'font-medium');
+      });
+      const activeBtn = document.getElementById(`themeBtn-${themeKey}`);
+      if (activeBtn) {
+        activeBtn.classList.remove('border-gray-200', 'bg-white', 'font-medium');
+        activeBtn.classList.add('border-deepPink', 'bg-pink-100', 'scale-105', 'font-bold');
+      }
+
+      // Pre-fill fields with smart defaults
+      document.getElementById('cfgRecipient').value = preset.recipient;
+      document.getElementById('cfgQuestion').value = preset.question;
+      document.getElementById('cfgMessage').value = preset.message;
+      document.getElementById('cfgPostVanishYesText').value = preset.postVanishYesText;
+      document.getElementById('cfgLoop1Msg').value = preset.loop1Msg;
+      document.getElementById('cfgLoop2Msg').value = preset.loop2Msg;
+      document.getElementById('cfgLoop3Msg').value = preset.loop3Msg;
+
+      // Update theme header & styling
+      document.body.className = `min-h-screen w-full relative flex flex-col justify-between items-center text-gray-800 p-3 sm:p-6 overflow-y-auto ${preset.bodyClass}`;
+      document.getElementById('themeHeaderIcon').textContent = preset.headerIcon;
+      document.getElementById('themeHeaderTitle').textContent = preset.headerTitle;
+      document.getElementById('bannerThemeTag').textContent = preset.bannerText;
+      document.getElementById('envelopeIcon').textContent = preset.envelopeIcon;
+      document.getElementById('windowHeaderIcon').textContent = preset.headerIcon;
+      document.getElementById('windowHeaderTitle').textContent = preset.headerTitle;
+      document.getElementById('topThreeIcons').innerHTML = preset.topIcons;
+      document.getElementById('successCelebrationEmoji').textContent = preset.celebrationEmoji;
+      document.getElementById('successTitle').textContent = preset.celebrationTitle;
+
+      initFloatingItems(preset.floatingItems);
+      showToast(`Switched to ${preset.name}! ✨`, preset.headerIcon);
+      syncCardContent();
+    }
+
+    // Avatar Type Toggle (Mascot vs Custom Photo)
+    function handleAvatarTypeChange() {
+      const selected = document.querySelector('input[name="avatarType"]:checked').value;
+      proposalData.avatarType = selected;
+
+      const mascotSec = document.getElementById('mascotSection');
+      const customPhotoSec = document.getElementById('customPhotoSection');
+
+      if (selected === 'customPhoto') {
+        mascotSec.classList.add('hidden');
+        customPhotoSec.classList.remove('hidden');
+      } else {
+        mascotSec.classList.remove('hidden');
+        customPhotoSec.classList.add('hidden');
+      }
+
+      syncCardContent();
+    }
+
+    function handleCustomPhotoUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        proposalData.customPhotoDataUrl = evt.target.result;
+        document.getElementById('customPhotoThumbBox').classList.remove('hidden');
+        document.getElementById('customPhotoThumb').src = evt.target.result;
+        syncCardContent();
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function clearCustomPhoto() {
+      proposalData.customPhotoDataUrl = "";
+      document.getElementById('cfgCustomPhotoInput').value = "";
+      document.getElementById('customPhotoThumbBox').classList.add('hidden');
+      document.getElementById('customPhotoThumb').src = "";
+      syncCardContent();
+    }
+
+    // Render Calendar Animal Picker Options
+    function renderMascotPicker() {
+      const picker = document.getElementById('mascotPicker');
+      picker.innerHTML = '';
+      Object.keys(calendarAnimals).forEach(key => {
+        const item = calendarAnimals[key];
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.dataset.mascot = key;
+        btn.onclick = () => selectMascot(key);
+        btn.className = `mascot-btn border-2 p-2 rounded-2xl flex flex-col items-center justify-center transition-all bg-white ${key === proposalData.mascot ? 'border-deepPink bg-pink-100 scale-105 shadow-sm' : 'border-pink-200 hover:border-deepPink'}`;
+        btn.innerHTML = `
+          <span class="text-xl">${item.emoji}</span>
+          <span class="text-[9px] font-bold mt-1 tracking-tight text-gray-700">${item.name}</span>
+        `;
+        picker.appendChild(btn);
+      });
+    }
+
+    function selectMascot(key) {
+      proposalData.mascot = key;
+      const data = calendarAnimals[key] || calendarAnimals.pig;
+      document.getElementById('selectedMascotLabel').textContent = data.name;
+
+      document.querySelectorAll('.mascot-btn').forEach(btn => {
+        if (btn.dataset.mascot === key) {
+          btn.className = 'mascot-btn border-2 border-deepPink bg-pink-100 p-2 rounded-2xl flex flex-col items-center justify-center transition-all scale-105 shadow-sm';
+        } else {
+          btn.className = 'mascot-btn border-2 border-pink-200 hover:border-deepPink p-2 rounded-2xl flex flex-col items-center justify-center transition-all bg-white';
+        }
+      });
+
+      renderAvatarDisplay();
+    }
+
+    function renderAvatarDisplay() {
+      const container = document.getElementById('mascotIconContainer');
+      const label = document.getElementById('mascotLabel');
+
+      if (proposalData.avatarType === 'customPhoto' && proposalData.customPhotoDataUrl) {
+        label.textContent = proposalData.theme === 'wedding' ? 'OUR PHOTO 💍' : 'OUR PHOTO ✨';
+        label.style.color = '#ff4d6d';
+        container.innerHTML = `<img src="${proposalData.customPhotoDataUrl}" class="w-full h-full object-cover rounded-xl" />`;
+      } else {
+        const info = calendarAnimals[proposalData.mascot] || calendarAnimals.pig;
+        label.textContent = info.name;
+        label.style.color = info.color;
+        container.innerHTML = info.svg || `<span class="text-3xl">${info.emoji}</span>`;
+      }
+    }
+
+    function toggleAccountSection() {
+      const enabled = document.getElementById('toggleAccountMode').checked;
+      const box = document.getElementById('accountConfigBox');
+      proposalData.useAccount = enabled;
+      box.classList.toggle('hidden', !enabled);
+    }
+
+    function handleQrUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        proposalData.qrDataUrl = evt.target.result;
+        document.getElementById('qrPreviewThumb').classList.remove('hidden');
+        document.getElementById('qrThumbImg').src = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function syncCardContent() {
+      proposalData.recipient = document.getElementById('cfgRecipient').value.trim() || defaultData.recipient;
+      proposalData.question = document.getElementById('cfgQuestion').value.trim() || defaultData.question;
+      proposalData.message = document.getElementById('cfgMessage').value.trim() || defaultData.message;
+      proposalData.postVanishYesText = document.getElementById('cfgPostVanishYesText').value.trim() || defaultData.postVanishYesText;
+
+      proposalData.loop1Count = Math.max(1, parseInt(document.getElementById('cfgLoop1Count').value) || 2);
+      proposalData.loop1Msg = document.getElementById('cfgLoop1Msg').value.trim() || defaultData.loop1Msg;
+      proposalData.loop2Count = Math.max(1, parseInt(document.getElementById('cfgLoop2Count').value) || 4);
+      proposalData.loop2Msg = document.getElementById('cfgLoop2Msg').value.trim() || defaultData.loop2Msg;
+      proposalData.loop3Count = Math.max(1, parseInt(document.getElementById('cfgLoop3Count').value) || 1);
+      proposalData.loop3Msg = document.getElementById('cfgLoop3Msg').value.trim() || defaultData.loop3Msg;
+
+      proposalData.useAccount = document.getElementById('toggleAccountMode').checked;
+      proposalData.accountMsg = document.getElementById('cfgAccountMsg').value.trim() || defaultData.accountMsg;
+      proposalData.accountNum = document.getElementById('cfgAccountNum').value.trim() || defaultData.accountNum;
+
+      document.getElementById('cardRecipientBadge').textContent = `To: ${proposalData.recipient} 💖`;
+      document.getElementById('cardQuestionText').textContent = proposalData.question;
+      document.getElementById('celebrationFinalMsg').textContent = proposalData.message;
+
+      // Update account display on celebration card
+      const accBox = document.getElementById('successAccountBox');
+      if (proposalData.useAccount) {
+        accBox.classList.remove('hidden');
+        document.getElementById('successAccountMsg').textContent = proposalData.accountMsg;
+        document.getElementById('successAccountNum').textContent = proposalData.accountNum;
+        if (proposalData.qrDataUrl) {
+          document.getElementById('successQrDisplay').classList.remove('hidden');
+          document.getElementById('successQrImg').src = proposalData.qrDataUrl;
+        } else {
+          document.getElementById('successQrDisplay').classList.add('hidden');
+        }
+      } else {
+        accBox.classList.add('hidden');
+      }
+
+      renderAvatarDisplay();
+      resetButtons();
+    }
+
+    function resetButtons() {
+      noDodgeCount = 0;
+      isNoVanished = false;
+
+      const noBtn = document.getElementById('noBtn');
+      const yesBtn = document.getElementById('yesBtn');
+      const reactionEl = document.getElementById('dodgeReaction');
+
+      reactionEl.innerText = "";
+      reactionEl.style.opacity = '0';
+
+      noBtn.style.display = 'block';
+      noBtn.style.position = 'absolute';
+      noBtn.style.left = '62%';
+      noBtn.style.top = '36%';
+      noBtn.style.transform = 'none';
+      noBtn.style.opacity = '1';
+      noBtn.innerText = "NO 😢";
+
+      yesBtn.style.transform = 'none';
+      yesBtn.className = 'px-8 py-3 bg-white text-darkPink border-2 border-darkPink rounded-2xl font-pixel text-xs tracking-wider shadow-lg hover:bg-pink-500 hover:text-white transition-all transform active:scale-95 duration-150 font-bold z-10';
+      yesBtn.innerText = "YES 🥰";
+    }
+
+    // Dodging NO Button Logic with Loop 3 & Editable Post-Vanish YES Text
+    function dodgeNoButton(e) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+
+      if (isNoVanished) return;
+
+      noDodgeCount++;
+
+      const playZone = document.getElementById('btnInteractiveArea');
+      const noBtn = document.getElementById('noBtn');
+      const yesBtn = document.getElementById('yesBtn');
+      const reactionEl = document.getElementById('dodgeReaction');
+
+      const l1 = proposalData.loop1Count;
+      const l2 = proposalData.loop2Count;
+      const l3 = proposalData.loop3Count;
+      const totalRequiredToVanish = l1 + l2 + l3;
+
+      let currentMsg = proposalData.loop1Msg;
+
+      if (noDodgeCount <= l1) {
+        currentMsg = proposalData.loop1Msg;
+        noBtn.innerText = "NO 🥺";
+      } else if (noDodgeCount <= (l1 + l2)) {
+        currentMsg = proposalData.loop2Msg;
+        noBtn.innerText = "Wait! 😱";
+      } else if (noDodgeCount <= totalRequiredToVanish) {
+        currentMsg = proposalData.loop3Msg;
+        noBtn.innerText = "NO?! 🏃‍♂️";
+      }
+
+      // Check if all 3 loops have finished (AFTER displaying loop 3 message)
+      if (noDodgeCount > totalRequiredToVanish) {
+        isNoVanished = true;
+        playPoofSound();
+
+        confetti({
+          particleCount: 25,
+          spread: 45,
+          origin: { y: 0.7 },
+          colors: ['#cccccc', '#ffb3c1', '#ffffff']
+        });
+
+        reactionEl.innerText = "NO has vanished! Only YES remains! 💍";
+        reactionEl.style.opacity = '1';
+
+        noBtn.style.transform = 'scale(0) rotate(180deg)';
+        noBtn.style.opacity = '0';
+        setTimeout(() => {
+          noBtn.style.display = 'none';
+        }, 200);
+
+        // Responsive, uncropped full-width YES button with USER-CUSTOMIZED TEXT
+        yesBtn.style.transform = 'none';
+        yesBtn.className = 'w-full py-3.5 px-3 bg-gradient-to-r from-deepPink to-vibrantPink text-white border-2 border-darkPink rounded-2xl font-pixel text-[11px] sm:text-xs tracking-normal shadow-lg transition-all animate-pulse font-bold z-10 text-center flex items-center justify-center';
+        yesBtn.innerText = proposalData.postVanishYesText || "YES! I'M ALL YOURS! 🥰💖";
+
+        return;
+      }
+
+      playDodgeSound();
+
+      reactionEl.innerText = currentMsg;
+      reactionEl.style.opacity = '1';
+
+      // Keep strictly within playZone boundaries
+      const zoneRect = playZone.getBoundingClientRect();
+      const btnW = noBtn.offsetWidth || 75;
+      const btnH = noBtn.offsetHeight || 36;
+
+      const maxLeft = Math.max(10, zoneRect.width - btnW - 12);
+      const maxTop = Math.max(10, zoneRect.height - btnH - 10);
+
+      const targetLeft = Math.floor(Math.random() * maxLeft);
+      const targetTop = Math.floor(Math.random() * maxTop);
+
+      noBtn.style.position = 'absolute';
+      noBtn.style.left = `${Math.max(8, targetLeft)}px`;
+      noBtn.style.top = `${Math.max(6, targetTop)}px`;
+      noBtn.style.transform = `rotate(${(Math.random() - 0.5) * 16}deg) scale(0.96)`;
+    }
+
+    // Bind Dodge Events
+    const noBtn = document.getElementById('noBtn');
+    noBtn.addEventListener('touchstart', dodgeNoButton, { passive: false });
+    noBtn.addEventListener('pointerdown', dodgeNoButton);
+    noBtn.addEventListener('mouseover', dodgeNoButton);
+    noBtn.addEventListener('click', dodgeNoButton);
+
+    function handleYesClicked() {
+      playCelebrationSound();
+      launchConfetti();
+      document.getElementById('retroCardContainer').classList.add('hidden');
+      document.getElementById('successCard').classList.remove('hidden');
+    }
+
+    function openEnvelope() {
+      playCelebrationSound();
+      document.getElementById('envelopeStage').classList.add('hidden');
+      document.getElementById('retroCardContainer').classList.remove('hidden');
+      resetButtons();
+    }
+
+    function replayCard() {
+      document.getElementById('successCard').classList.add('hidden');
+      document.getElementById('retroCardContainer').classList.add('hidden');
+      document.getElementById('envelopeStage').classList.remove('hidden');
+      resetButtons();
+    }
+
+    function generateLoveCard() {
+      syncCardContent();
+      const cardId = 'card_' + Math.random().toString(36).substring(2, 9);
+      const maskedMessage = `Love Card for ${proposalData.recipient}! Open your surprise here: https://love-card.app/#card=${cardId}`;
+      
+      document.getElementById('shareSnippetDisplay').value = maskedMessage;
+      document.getElementById('generatedLinkBox').classList.remove('hidden');
+      showToast('Invitation generated successfully! 💌', '✨');
+    }
+
+    function copyGeneratedLink() {
+      const input = document.getElementById('shareSnippetDisplay');
+      input.select();
+      input.setSelectionRange(0, 99999);
+      document.execCommand('copy');
+      showToast('Invitation copied to clipboard!', '📋');
+    }
+
+    function copyAccountNumber() {
+      const num = document.getElementById('successAccountNum').textContent;
+      const el = document.createElement('textarea');
+      el.value = num;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+      showToast('Account Number copied!', '📋');
+    }
+
+    function shareViaNative() {
+      const text = document.getElementById('shareSnippetDisplay').value;
+      if (navigator.share) {
+        navigator.share({
+          title: `Invitation for ${proposalData.recipient}`,
+          text: text
+        }).catch(() => {});
+      } else {
+        copyGeneratedLink();
+      }
+    }
+
+    function shareViaWhatsApp() {
+      const text = encodeURIComponent(document.getElementById('shareSnippetDisplay').value);
+      window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+    }
+
+    function shareResponseReply() {
+      const text = encodeURIComponent(`I said YES! 💖✨\n\n"${proposalData.message}"`);
+      window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+    }
+
+    function switchView(mode) {
+      const creatorView = document.getElementById('creatorView');
+      const cardView = document.getElementById('cardView');
+      const navCreateBtn = document.getElementById('navCreateBtn');
+      const navPreviewBtn = document.getElementById('navPreviewBtn');
+
+      if (mode === 'create') {
+        creatorView.classList.remove('hidden');
+        cardView.classList.add('hidden');
+        navCreateBtn.className = 'px-3 py-1 text-xs font-semibold rounded-full transition-all bg-deepPink text-white shadow-sm';
+        navPreviewBtn.className = 'px-3 py-1 text-xs font-semibold rounded-full transition-all text-gray-600 hover:text-darkPink';
+      } else {
+        creatorView.classList.add('hidden');
+        cardView.classList.remove('hidden');
+        navCreateBtn.className = 'px-3 py-1 text-xs font-semibold rounded-full transition-all text-gray-600 hover:text-darkPink';
+        navPreviewBtn.className = 'px-3 py-1 text-xs font-semibold rounded-full transition-all bg-deepPink text-white shadow-sm';
+      }
+    }
+
+    function testAsRecipient() {
+      syncCardContent();
+      switchView('recipient');
+      replayCard();
+    }
+
+    function launchConfetti() {
+      const count = 120;
+      const defaults = { origin: { y: 0.6 } };
+      function fire(particleRatio, opts) {
+        confetti(Object.assign({}, defaults, opts, {
+          particleCount: Math.floor(count * particleRatio)
+        }));
+      }
+      fire(0.25, { spread: 26, startVelocity: 55, colors: ['#ff758f', '#ff4d6d'] });
+      fire(0.2, { spread: 60, colors: ['#ffd6e0', '#ffccd5'] });
+      fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
+      fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, colors: ['#c9184a', '#ffffff'] });
+    }
+
+    function initFloatingItems(items = ['💖', '💕', '💗', '💓', '✨']) {
+      const container = document.getElementById('hearts-container');
+      container.innerHTML = '';
+      for (let i = 0; i < 15; i++) {
+        const item = document.createElement('div');
+        item.className = 'floating-item';
+        item.innerText = items[Math.floor(Math.random() * items.length)];
+        item.style.left = `${Math.random() * 95}%`;
+        item.style.animationDelay = `${Math.random() * 5}s`;
+        item.style.animationDuration = `${5 + Math.random() * 5}s`;
+        item.style.fontSize = `${14 + Math.random() * 16}px`;
+        container.appendChild(item);
+      }
+    }
+
+    function showToast(text, icon = '💖') {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMsg').innerText = text;
+      document.getElementById('toastIcon').innerText = icon;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+
+    window.onload = function() {
+      renderMascotPicker();
+      selectMascot('pig');
+      applyThemePreset('love');
+    };
+  </script>
+</body>
+</html>
